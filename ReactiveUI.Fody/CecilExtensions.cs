@@ -66,5 +66,20 @@ namespace ReactiveUI.Fody
 
             return reference;
         }
+
+        public static AssemblyNameReference FindAssembly(this ModuleDefinition currentModule, string assemblyName)
+        {
+            return currentModule.AssemblyReferences.SingleOrDefault(x => x.Name == assemblyName);
+        }
+
+        public static TypeReference FindType(this ModuleDefinition currentModule, string @namespace, string typeName, IMetadataScope scope = null, params string[] typeParameters)
+        {
+            var result = new TypeReference(@namespace, typeName, currentModule, scope);
+            foreach (var typeParameter in typeParameters)
+            {
+                result.GenericParameters.Add(new GenericParameter(typeParameter, result));
+            }
+            return result;
+        }
     }
 }

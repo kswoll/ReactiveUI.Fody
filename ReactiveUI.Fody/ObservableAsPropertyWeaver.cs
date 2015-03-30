@@ -15,20 +15,18 @@ namespace ReactiveUI.Fody
 
         public void Execute()
         {
-            var reactiveUI = ModuleDefinition.AssemblyReferences.SingleOrDefault(x => x.Name == "ReactiveUI");
+            var reactiveUI = ModuleDefinition.FindAssembly("ReactiveUI");
             if (reactiveUI == null)
                 throw new Exception("Could not find assembly: ReactiveUI (" + string.Join(", ", ModuleDefinition.AssemblyReferences.Select(x => x.Name)) + ")");
             var helpers = ModuleDefinition.AssemblyReferences.SingleOrDefault(x => x.Name == "ReactiveUI.Fody.Helpers");
             if (helpers == null)
                 throw new Exception("Could not find assembly: ReactiveUI.Fody.Helpers (" + string.Join(", ", ModuleDefinition.AssemblyReferences.Select(x => x.Name)) + ")");
-            var reactiveObject = new TypeReference("ReactiveUI", "ReactiveObject", ModuleDefinition, reactiveUI);
 
+            var reactiveObject = ModuleDefinition.FindType("ReactiveUI", "ReactiveObject", reactiveUI);
             var targetTypes = ModuleDefinition.Types.Where(x => x.BaseType != null && reactiveObject.IsAssignableFrom(x.BaseType));
 
-            var observableAsPropertyHelper = new TypeReference("ReactiveUI", "ObservableAsPropertyHelper`1", ModuleDefinition, reactiveUI);
-            observableAsPropertyHelper.GenericParameters.Add(new GenericParameter("T", observableAsPropertyHelper));
-            var observableAsPropertyAttribute = new TypeReference("ReactiveUI.Fody.Helpers", "ObservableAsPropertyAttribute", ModuleDefinition, helpers);
-//            var observableAsPropertyAttribute = ModuleDefinition.Import(typeof(ObservableAsPropertyAttribute));
+            var observableAsPropertyHelper = ModuleDefinition.FindType("ReactiveUI", "ObservableAsPropertyHelper`1", reactiveUI, "T");
+            var observableAsPropertyAttribute = ModuleDefinition.FindType("ReactiveUI.Fody.Helpers", "ObservableAsPropertyAttribute", helpers);
             var observableAsPropertyHelperGetValue = ModuleDefinition.Import(observableAsPropertyHelper.Resolve().Properties.Single(x => x.Name == "Value").GetMethod);
 
             foreach (var targetType in targetTypes)
@@ -38,23 +36,23 @@ namespace ReactiveUI.Fody
                     var genericObservableAsPropertyHelper = observableAsPropertyHelper.MakeGenericInstanceType(property.PropertyType);
                     var genericObservableAsPropertyHelperGetValue = observableAsPropertyHelperGetValue.Bind(genericObservableAsPropertyHelper);
                     ModuleDefinition.Import(genericObservableAsPropertyHelperGetValue);
-                    LogInfo(genericObservableAsPropertyHelperGetValue.Resolve().ToString());
 
                     // Declare a field to store the property value
                     var field = new FieldDefinition("$" + property.Name, FieldAttributes.Private, genericObservableAsPropertyHelper);
                     targetType.Fields.Add(field);
 
+                    // We're re-implementing the getter since the original definition was an extern method.  So remove that
+                    // stub.
                     targetType.Methods.Remove(property.GetMethod);
 
                     property.GetMethod.Body = new MethodBody(property.GetMethod);
                     property.GetMethod.Body.Emit(il =>
                     {
-                        il.Emit(OpCodes.Ldarg_0);
-                        il.Emit(OpCodes.Ldfld, field);
-                        il.Emit(OpCodes.Callvirt, genericObservableAsPropertyHelperGetValue);
-                        il.Emit(OpCodes.Ret);                        
+                        il.Emit(OpCodes.Ldarg_0);                                               // this
+                        il.Emit(OpCodes.Ldfld, field);                                          // pop -> this.$PropertyName
+                        il.Emit(OpCodes.Callvirt, genericObservableAsPropertyHelperGetValue);   // pop -> this.$PropertyName.Value
+                        il.Emit(OpCodes.Ret);                                                   // Return the value that is on the stack
                     });
-                    property.GetMethod.SemanticsAttributes = MethodSemanticsAttributes.Getter;
                     targetType.Methods.Add(property.GetMethod);
                 }
             }

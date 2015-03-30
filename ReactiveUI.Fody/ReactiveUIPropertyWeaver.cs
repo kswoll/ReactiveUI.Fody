@@ -7,6 +7,10 @@ using Mono.Cecil.Cil;
 
 namespace ReactiveUI.Fody
 {
+    /// <summary>
+    /// Weaver that replaces properties marked with `[DataMember]` on subclasses of `ReactiveObject` with an 
+    /// implementation that invokes `RaisePropertyChanged` as is required for reaciveui.
+    /// </summary>
     public class ReactiveUIPropertyWeaver
     {
         public ModuleDefinition ModuleDefinition { get; set; }
