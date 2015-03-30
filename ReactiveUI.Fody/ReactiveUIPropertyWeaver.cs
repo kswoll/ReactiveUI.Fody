@@ -42,9 +42,15 @@ namespace ReactiveUI.Fody
                     var field = new FieldDefinition("$" + property.Name, FieldAttributes.Private, property.PropertyType);
                     targetType.Fields.Add(field);
 
+                    // Remove old field (the generated backing field for the auto property)
+                    var oldField = (FieldReference)property.GetMethod.Body.Instructions.Where(x => x.Operand is FieldReference).Single().Operand;
+                    targetType.Fields.Remove(oldField.Resolve());
+
+                    // We're rebuilding the auto-property getter/setter so remove the old ones
                     targetType.Methods.Remove(property.GetMethod);
                     targetType.Methods.Remove(property.SetMethod);
 
+                    // Build out the getter which simply returns the value of the generated field
                     property.GetMethod.Body = new MethodBody(property.GetMethod);
                     property.GetMethod.Body.Emit(il =>
                     {
@@ -52,7 +58,6 @@ namespace ReactiveUI.Fody
                         il.Emit(OpCodes.Ldfld, field);                              // pop -> this.$PropertyName
                         il.Emit(OpCodes.Ret);                                       // Return the field value that is lying on the stack
                     });
-                    property.GetMethod.SemanticsAttributes = MethodSemanticsAttributes.Getter;
                     targetType.Methods.Add(property.GetMethod);
 
                     var genericRaiseAndSetIfChangedMethod = raiseAndSetIfChangedMethod.MakeGenericMethod(targetType, property.PropertyType);
@@ -69,7 +74,6 @@ namespace ReactiveUI.Fody
                         il.Emit(OpCodes.Pop);                                       // We don't care about the result of RaiseAndSetIfChanged, so pop it off the stack (stack is now empty)
                         il.Emit(OpCodes.Ret);                                       // Return out of the function
                     });
-                    property.SetMethod.SemanticsAttributes = MethodSemanticsAttributes.Setter;
                     targetType.Methods.Add(property.SetMethod);
                 }
             }
