@@ -38,6 +38,6 @@ It will generate the field and implement the property for you.  Because there is
 should use the provided `.ToPropertyEx` extension method provided by this library:
 
     ...
-    .ToProperty(this, x => x.PersonInfo);
+    .ToPropertyEx(this, x => x.PersonInfo);
     
 This extension will assign the auto-generated field for you rather than relying on the `out` parameter.
