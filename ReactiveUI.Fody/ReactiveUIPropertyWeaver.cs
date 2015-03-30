@@ -48,9 +48,9 @@ namespace ReactiveUI.Fody
                     property.GetMethod.Body = new MethodBody(property.GetMethod);
                     property.GetMethod.Body.Emit(il =>
                     {
-                        il.Emit(OpCodes.Ldarg_0);
-                        il.Emit(OpCodes.Ldfld, field);
-                        il.Emit(OpCodes.Ret);                        
+                        il.Emit(OpCodes.Ldarg_0);                                   // this
+                        il.Emit(OpCodes.Ldfld, field);                              // pop -> this.$PropertyName
+                        il.Emit(OpCodes.Ret);                                       // Return the field value that is lying on the stack
                     });
                     property.GetMethod.SemanticsAttributes = MethodSemanticsAttributes.Getter;
                     targetType.Methods.Add(property.GetMethod);
@@ -60,14 +60,14 @@ namespace ReactiveUI.Fody
                     property.SetMethod.Body = new MethodBody(property.SetMethod);
                     property.SetMethod.Body.Emit(il =>
                     {
-                        il.Emit(OpCodes.Ldarg_0);
-                        il.Emit(OpCodes.Ldarg_0);
-                        il.Emit(OpCodes.Ldflda, field);
-                        il.Emit(OpCodes.Ldarg_1);
-                        il.Emit(OpCodes.Ldstr, property.Name);
-                        il.Emit(OpCodes.Call, genericRaiseAndSetIfChangedMethod);
-                        il.Emit(OpCodes.Pop);
-                        il.Emit(OpCodes.Ret);                        
+                        il.Emit(OpCodes.Ldarg_0);                                   // this
+                        il.Emit(OpCodes.Ldarg_0);                                   // this
+                        il.Emit(OpCodes.Ldflda, field);                             // pop -> this.$PropertyName
+                        il.Emit(OpCodes.Ldarg_1);                                   // value
+                        il.Emit(OpCodes.Ldstr, property.Name);                      // "PropertyName"
+                        il.Emit(OpCodes.Call, genericRaiseAndSetIfChangedMethod);   // pop * 4 -> this.RaiseAndSetIfChanged(this.$PropertyName, value, "PropertyName")
+                        il.Emit(OpCodes.Pop);                                       // We don't care about the result of RaiseAndSetIfChanged, so pop it off the stack (stack is now empty)
+                        il.Emit(OpCodes.Ret);                                       // Return out of the function
                     });
                     property.SetMethod.SemanticsAttributes = MethodSemanticsAttributes.Setter;
                     targetType.Methods.Add(property.SetMethod);
