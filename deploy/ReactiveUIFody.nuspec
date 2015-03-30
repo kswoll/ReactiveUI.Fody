@@ -6,12 +6,13 @@
     <authors>kirk</authors>
     <owners>kirk</owners>
     <projectUrl>https://github.com/kswoll/ReactiveUI.Fody</projectUrl>
+    <licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Fody extension to generate RaisePropertyChange notifications for properties and ObservableAsPropertyHelper properties.</description>
     <copyright>Copyright 2015</copyright>
     <tags>reactiveui fody</tags>
     <dependencies>
-      <dependency id="Fody" version="1.0" />
+      <dependency id="Fody"/>
     </dependencies>
   </metadata>
 </package>
