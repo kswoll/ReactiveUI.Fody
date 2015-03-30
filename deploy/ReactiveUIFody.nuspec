@@ -2,9 +2,10 @@
 <package >
   <metadata>
     <id>ReactiveUI.Fody</id>
-    <version>1.0.19</version>
+    <version>1.0.20</version>
     <authors>kirk</authors>
     <owners>kirk</owners>
+    <projectUrl>https://github.com/kswoll/ReactiveUI.Fody</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Fody extension to generate RaisePropertyChange notifications for properties and ObservableAsPropertyHelper properties.</description>
     <copyright>Copyright 2015</copyright>
