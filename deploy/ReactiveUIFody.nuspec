@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>ReactiveUI.Fody</id>
+    <version>1.0.19</version>
+    <authors>kirk</authors>
+    <owners>kirk</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Fody extension to generate RaisePropertyChange notifications for properties and ObservableAsPropertyHelper properties.</description>
+    <copyright>Copyright 2015</copyright>
+    <tags>reactiveui fody</tags>
+    <dependencies>
+      <dependency id="Fody" version="1.0" />
+    </dependencies>
+  </metadata>
+</package>

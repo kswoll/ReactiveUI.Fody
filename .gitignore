@@ -1,0 +1,11 @@
+packages/
+*.nupkg
+*.suo
+*.userprefs
+*.user
+ReactiveUI.Fody/obj/
+ReactiveUI.Fody/bin/
+ReactiveUI.Fody.Helpers.Net45/obj/
+ReactiveUI.Fody.Helpers.Net45/bin/
+ReactiveUI.Fody.Helpers.Ios/bin/
+ReactiveUI.Fody.Helpers.Ios/obj/

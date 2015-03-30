@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReactiveUI.Fody", "ReactiveUI.Fody\ReactiveUI.Fody.csproj", "{CCACB6C3-4C59-4372-85D1-CDDCE0D26989}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "ReactiveUI.Fody.Helpers", "ReactiveUI.Fody.Helpers\ReactiveUI.Fody.Helpers.shproj", "{4433FF2E-3150-4D7F-BE18-A2258799B79D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReactiveUI.Fody.Helpers.Net45", "ReactiveUI.Fody.Helpers.Net45\ReactiveUI.Fody.Helpers.Net45.csproj", "{1CA52110-BE45-4C45-B709-28061077E2A5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReactiveUI.Fody.Helpers.Ios", "ReactiveUI.Fody.Helpers.Ios\ReactiveUI.Fody.Helpers.Ios.csproj", "{377C39ED-0F7E-4522-A41E-96C5BA0C4FCB}"
+EndProject
+Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		ReactiveUI.Fody.Helpers\ReactiveUI.Fody.Helpers.projitems*{1ca52110-be45-4c45-b709-28061077e2a5}*SharedItemsImports = 4
+		ReactiveUI.Fody.Helpers\ReactiveUI.Fody.Helpers.projitems*{377c39ed-0f7e-4522-a41e-96c5ba0c4fcb}*SharedItemsImports = 4
+		ReactiveUI.Fody.Helpers\ReactiveUI.Fody.Helpers.projitems*{4433ff2e-3150-4d7f-be18-a2258799b79d}*SharedItemsImports = 13
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CCACB6C3-4C59-4372-85D1-CDDCE0D26989}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCACB6C3-4C59-4372-85D1-CDDCE0D26989}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCACB6C3-4C59-4372-85D1-CDDCE0D26989}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCACB6C3-4C59-4372-85D1-CDDCE0D26989}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CA52110-BE45-4C45-B709-28061077E2A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CA52110-BE45-4C45-B709-28061077E2A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CA52110-BE45-4C45-B709-28061077E2A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CA52110-BE45-4C45-B709-28061077E2A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{377C39ED-0F7E-4522-A41E-96C5BA0C4FCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{377C39ED-0F7E-4522-A41E-96C5BA0C4FCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{377C39ED-0F7E-4522-A41E-96C5BA0C4FCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{377C39ED-0F7E-4522-A41E-96C5BA0C4FCB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
