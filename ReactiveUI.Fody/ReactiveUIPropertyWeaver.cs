@@ -35,7 +35,7 @@ namespace ReactiveUI.Fody
             if (raiseAndSetIfChangedMethod == null)
                 throw new Exception("raiseAndSetIfChangedMethod is null");
 
-            var reactivePropertyAttribute = ModuleDefinition.FindType("ReactiveUI.Fody.Helpers", "ObservableAsPropertyAttribute", helpers);
+            var reactivePropertyAttribute = ModuleDefinition.FindType("ReactiveUI.Fody.Helpers", "ReactivePropertyAttribute", helpers);
             if (reactivePropertyAttribute == null)
                 throw new Exception("reactivePropertyAttribute is null");
 
@@ -67,6 +67,7 @@ namespace ReactiveUI.Fody
 
                     var genericRaiseAndSetIfChangedMethod = raiseAndSetIfChangedMethod.MakeGenericMethod(targetType, property.PropertyType);
 
+                    // Build out the setter which fires the RaiseAndSetIfChanged method
                     property.SetMethod.Body = new MethodBody(property.SetMethod);
                     property.SetMethod.Body.Emit(il =>
                     {

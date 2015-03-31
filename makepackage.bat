@@ -1,6 +1,4 @@
-SET MSBUILD="C:\Program Files (x86)\MSBuild\14.0\Bin\msbuild.exe"
-
-msbuild ReactiveUIFody.sln
+"C:\Program Files (x86)\MSBuild\14.0\Bin\msbuild.exe" ReactiveUIFody.sln
 
 cd Nuget
 mkdir lib
