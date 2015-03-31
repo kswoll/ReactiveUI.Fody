@@ -11,5 +11,6 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)ObservableAsPropertyAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ObservableAsPropertyExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ReactivePropertyAttribute.cs" />
   </ItemGroup>
 </Project>

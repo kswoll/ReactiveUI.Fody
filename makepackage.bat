@@ -1,9 +1,8 @@
 SET MSBUILD="C:\Program Files (x86)\MSBuild\14.0\Bin\msbuild.exe"
 
-REM md
-msbuild Metacoder.sln
+msbuild ReactiveUIFody.sln
 
-cd deploy
+cd Nuget
 mkdir lib
 mkdir lib\net45
 mkdir lib\Xamarin.iOS10

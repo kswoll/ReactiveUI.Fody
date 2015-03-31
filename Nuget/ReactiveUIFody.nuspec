@@ -12,7 +12,7 @@
     <copyright>Copyright 2015</copyright>
     <tags>reactiveui fody</tags>
     <dependencies>
-      <dependency id="Fody"/>
+      <dependency id="Fody" version="1.0" />
     </dependencies>
   </metadata>
 </package>
