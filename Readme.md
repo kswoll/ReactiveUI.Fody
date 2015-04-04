@@ -1,12 +1,19 @@
 # ReactiveUI.Fody
-C# Fody extension to generate RaisePropertyChange notifications for properties and ObservableAsPropertyHelper   properties.
+C# Fody extension to generate RaisePropertyChange notifications for properties and ObservableAsPropertyHelper properties.
 
-Eases the need for boilerplate in your view models when using [reactiveui](https://github.com/reactiveui/ReactiveUI).  Typically, 
-in your view models you must declare properties like this:
+## Install ##
+Nuget package ReactiveUI.Fody:
+
+> Install-Package ReactiveUI.Fody
+
+Currently, you need to add `ReactiveUI` to your FodyWeavers.xml manually.
+
+##Description##
+
+Eases the need for boilerplate in your view models when using [reactiveui](https://github.com/reactiveui/ReactiveUI).  Typically, in your view models you must declare properties like this:
 
     string _SearchId;
     
-    [DataMember]
     public string SearchId {
         get { return _SearchId; }
         set { this.RaiseAndSetIfChanged(ref _SearchId, value); }
@@ -14,10 +21,9 @@ in your view models you must declare properties like this:
 
 This is tedious since all you'd like to do is declare properties as normal:
 
-    [DataMember]public string Search { get; set; }
+    [Reactive]public string Search { get; set; }
     
-This fody plugin will weave the former into your output based on the simple auto-property declaration you provide.  Similarly, 
-in order to handle observable property helper properties, you must declare them like this:
+If a property is annotated with the `[Reactive]` attribute, the plugin will weave the boilerplate into your output based on the simple auto-property declaration you provide.  Similarly, in order to handle observable property helper properties, you must declare them like this:
 
     ObservableAsPropertyHelper<string> _PersonInfo;
     
