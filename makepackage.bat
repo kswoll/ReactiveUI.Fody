@@ -4,10 +4,12 @@ cd Nuget
 mkdir lib
 mkdir lib\net45
 mkdir lib\Xamarin.iOS10
+mkdir lib\MonoAndroid
 
 copy ..\ReactiveUI.Fody\bin\Debug\ReactiveUI.Fody.* .
-copy ..\ReactiveUI.Fody.Helpers.Ios\bin\iPhone\Debug\*.* lib\Xamarin.iOS10
-copy ..\ReactiveUI.Fody.Helpers.Net45\bin\Debug\*.* lib\net45
+copy ..\ReactiveUI.Fody.Helpers.Ios\bin\iPhone\Debug\ReactiveUI.Fody.Helpers.* lib\Xamarin.iOS10
+copy ..\ReactiveUI.Fody.Helpers.Net45\bin\Debug\ReactiveUI.Fody.Helpers.* lib\net45
+copy ..\ReactiveUI.Fody.Helpers.Android\bin\Debug\ReactiveUI.Fody.Helpers.* lib\MonoAndroid
 
 nuget pack ReactiveUIFody.nuspec
 

@@ -11,11 +11,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReactiveUI.Fody.Helpers.Net
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReactiveUI.Fody.Helpers.Ios", "ReactiveUI.Fody.Helpers.Ios\ReactiveUI.Fody.Helpers.Ios.csproj", "{377C39ED-0F7E-4522-A41E-96C5BA0C4FCB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReactiveUI.Fody.Helpers.Android", "ReactiveUI.Fody.Helpers.Android\ReactiveUI.Fody.Helpers.Android.csproj", "{6D2A6846-A8B7-4186-807D-12E335BD1C67}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		ReactiveUI.Fody.Helpers\ReactiveUI.Fody.Helpers.projitems*{1ca52110-be45-4c45-b709-28061077e2a5}*SharedItemsImports = 4
 		ReactiveUI.Fody.Helpers\ReactiveUI.Fody.Helpers.projitems*{377c39ed-0f7e-4522-a41e-96c5ba0c4fcb}*SharedItemsImports = 4
 		ReactiveUI.Fody.Helpers\ReactiveUI.Fody.Helpers.projitems*{4433ff2e-3150-4d7f-be18-a2258799b79d}*SharedItemsImports = 13
+		ReactiveUI.Fody.Helpers\ReactiveUI.Fody.Helpers.projitems*{6d2a6846-a8b7-4186-807d-12e335bd1c67}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,6 +37,10 @@ Global
 		{377C39ED-0F7E-4522-A41E-96C5BA0C4FCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{377C39ED-0F7E-4522-A41E-96C5BA0C4FCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{377C39ED-0F7E-4522-A41E-96C5BA0C4FCB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D2A6846-A8B7-4186-807D-12E335BD1C67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D2A6846-A8B7-4186-807D-12E335BD1C67}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D2A6846-A8B7-4186-807D-12E335BD1C67}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D2A6846-A8B7-4186-807D-12E335BD1C67}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

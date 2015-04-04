@@ -2,17 +2,20 @@
 <package >
   <metadata>
     <id>ReactiveUI.Fody</id>
-    <version>1.0.22</version>
+    <version>1.0.30</version>
     <authors>kirk</authors>
     <owners>kirk</owners>
     <projectUrl>https://github.com/kswoll/ReactiveUI.Fody</projectUrl>
     <licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
+	<releaseNotes>Fix bug when using auto property initializers on reactive properties.</releaseNotes>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Fody extension to generate RaisePropertyChange notifications for properties and ObservableAsPropertyHelper properties.</description>
     <copyright>Copyright 2015</copyright>
     <tags>reactiveui fody</tags>
     <dependencies>
       <dependency id="Fody" version="1.0" />
+	  <dependency id="reactiveui-core" version="6.4.0.1" />
+	  <dependency id="Splat" version="1.6.0" />
     </dependencies>
   </metadata>
 </package>
