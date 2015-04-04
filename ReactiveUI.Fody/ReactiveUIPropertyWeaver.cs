@@ -25,7 +25,7 @@ namespace ReactiveUI.Fody
         {
             var reactiveUI = ModuleDefinition.AssemblyReferences.Single(x => x.Name == "ReactiveUI");
             var helpers = ModuleDefinition.AssemblyReferences.SingleOrDefault(x => x.Name == "ReactiveUI.Fody.Helpers");
-            var reactiveObject = new TypeReference("ReactiveUI", "ReactiveObject", ModuleDefinition, reactiveUI);
+            var reactiveObject = new TypeReference("ReactiveUI", "IReactiveObject", ModuleDefinition, reactiveUI);
             var targetTypes = ModuleDefinition.Types.Where(x => x.BaseType != null && reactiveObject.IsAssignableFrom(x.BaseType));
             var reactiveObjectExtensions = new TypeReference("ReactiveUI", "IReactiveObjectExtensions", ModuleDefinition, reactiveUI).Resolve();
             if (reactiveObjectExtensions == null)
@@ -35,13 +35,13 @@ namespace ReactiveUI.Fody
             if (raiseAndSetIfChangedMethod == null)
                 throw new Exception("raiseAndSetIfChangedMethod is null");
 
-            var reactivePropertyAttribute = ModuleDefinition.FindType("ReactiveUI.Fody.Helpers", "ReactivePropertyAttribute", helpers);
-            if (reactivePropertyAttribute == null)
-                throw new Exception("reactivePropertyAttribute is null");
+            var reactiveAttribute = ModuleDefinition.FindType("ReactiveUI.Fody.Helpers", "ReactiveAttribute", helpers);
+            if (reactiveAttribute == null)
+                throw new Exception("reactiveAttribute is null");
 
             foreach (var targetType in targetTypes)
             {
-                foreach (var property in targetType.Properties.Where(x => x.IsDefined(reactivePropertyAttribute)).ToArray())
+                foreach (var property in targetType.Properties.Where(x => x.IsDefined(reactiveAttribute)).ToArray())
                 {
                     // Declare a field to store the property value
                     var field = new FieldDefinition("$" + property.Name, FieldAttributes.Private, property.PropertyType);

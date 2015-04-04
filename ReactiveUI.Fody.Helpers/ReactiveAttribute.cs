@@ -5,7 +5,7 @@ using System.Text;
 namespace ReactiveUI.Fody.Helpers
 {
     [AttributeUsage(AttributeTargets.Property)]
-    public class ReactivePropertyAttribute : Attribute
+    public class ReactiveAttribute : Attribute
     {
     }
 }
