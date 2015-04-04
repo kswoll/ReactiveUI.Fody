@@ -21,7 +21,7 @@ Eases the need for boilerplate in your view models when using [reactiveui](https
 
 This is tedious since all you'd like to do is declare properties as normal:
 
-    [Reactive]public string Search { get; set; }
+    [Reactive]public string SearchId { get; set; }
     
 If a property is annotated with the `[Reactive]` attribute, the plugin will weave the boilerplate into your output based on the simple auto-property declaration you provide.  Similarly, in order to handle observable property helper properties, you must declare them like this:
 
