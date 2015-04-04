@@ -49,11 +49,23 @@ namespace ReactiveUI.Fody
 
                     // Remove old field (the generated backing field for the auto property)
                     var oldField = (FieldReference)property.GetMethod.Body.Instructions.Where(x => x.Operand is FieldReference).Single().Operand;
-                    targetType.Fields.Remove(oldField.Resolve());
+                    var oldFieldDefinition = oldField.Resolve();
+                    targetType.Fields.Remove(oldFieldDefinition);
 
-                    // We're rebuilding the auto-property getter/setter so remove the old ones
-                    targetType.Methods.Remove(property.GetMethod);
-                    targetType.Methods.Remove(property.SetMethod);
+                    // See if there exists an initializer for the auto-property
+                    var constructors = targetType.Methods.Where(x => x.IsConstructor);
+                    foreach (var constructor in constructors)
+                    {
+                        LogInfo(oldFieldDefinition.ToString());
+                        var fieldAssignment = constructor.Body.Instructions.SingleOrDefault(x => Equals(x.Operand, oldFieldDefinition) || Equals(x.Operand, oldField));
+                        if (fieldAssignment != null)
+                        {
+                            // Replace field assignment with a property set (the stack semantics are the same for both, 
+                            // so happily we don't have to manipulate the bytecode any further.)
+                            var setterCall = constructor.Body.GetILProcessor().Create(property.SetMethod.IsVirtual ? OpCodes.Callvirt : OpCodes.Call, property.SetMethod);
+                            constructor.Body.GetILProcessor().Replace(fieldAssignment, setterCall);
+                        }
+                    }
 
                     // Build out the getter which simply returns the value of the generated field
                     property.GetMethod.Body = new MethodBody(property.GetMethod);
@@ -63,7 +75,6 @@ namespace ReactiveUI.Fody
                         il.Emit(OpCodes.Ldfld, field);                              // pop -> this.$PropertyName
                         il.Emit(OpCodes.Ret);                                       // Return the field value that is lying on the stack
                     });
-                    targetType.Methods.Add(property.GetMethod);
 
                     var genericRaiseAndSetIfChangedMethod = raiseAndSetIfChangedMethod.MakeGenericMethod(targetType, property.PropertyType);
 
@@ -80,7 +91,6 @@ namespace ReactiveUI.Fody
                         il.Emit(OpCodes.Pop);                                       // We don't care about the result of RaiseAndSetIfChanged, so pop it off the stack (stack is now empty)
                         il.Emit(OpCodes.Ret);                                       // Return out of the function
                     });
-                    targetType.Methods.Add(property.SetMethod);
                 }
             }
         }         
