@@ -51,7 +51,7 @@ namespace ReactiveUI.Fody
                     property.GetMethod.Body.Emit(il =>
                     {
                         il.Emit(OpCodes.Ldarg_0);                                               // this
-                        il.Emit(OpCodes.Ldfld, field);                                          // pop -> this.$PropertyName
+                        il.Emit(OpCodes.Ldfld, field.BindDefinition(targetType));               // pop -> this.$PropertyName
                         il.Emit(OpCodes.Callvirt, genericObservableAsPropertyHelperGetValue);   // pop -> this.$PropertyName.Value
                         il.Emit(OpCodes.Ret);                                                   // Return the value that is on the stack
                     });

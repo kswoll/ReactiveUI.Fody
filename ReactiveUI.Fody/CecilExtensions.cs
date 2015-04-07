@@ -67,6 +67,41 @@ namespace ReactiveUI.Fody
             return reference;
         }
 
+        public static MethodReference BindDefinition(this MethodReference method, TypeReference genericTypeDefinition)
+        {
+            if (!genericTypeDefinition.HasGenericParameters)
+                return method;
+
+            var genericDeclaration = new GenericInstanceType(genericTypeDefinition);
+            foreach (var parameter in genericTypeDefinition.GenericParameters)
+            {
+                genericDeclaration.GenericArguments.Add(parameter);
+            }
+            var reference = new MethodReference(method.Name, method.ReturnType, genericDeclaration);
+            reference.HasThis = method.HasThis;
+            reference.ExplicitThis = method.ExplicitThis;
+            reference.CallingConvention = method.CallingConvention;
+
+            foreach (var parameter in method.Parameters)
+                reference.Parameters.Add(new ParameterDefinition(parameter.ParameterType));
+
+            return reference;
+        }
+
+        public static FieldReference BindDefinition(this FieldReference field, TypeReference genericTypeDefinition)
+        {
+            if (!genericTypeDefinition.HasGenericParameters)
+                return field;
+
+            var genericDeclaration = new GenericInstanceType(genericTypeDefinition);
+            foreach (var parameter in genericTypeDefinition.GenericParameters)
+            {
+                genericDeclaration.GenericArguments.Add(parameter);
+            }
+            var reference = new FieldReference(field.Name, field.FieldType, genericDeclaration);
+            return reference;
+        }
+
         public static AssemblyNameReference FindAssembly(this ModuleDefinition currentModule, string assemblyName)
         {
             return currentModule.AssemblyReferences.SingleOrDefault(x => x.Name == assemblyName);

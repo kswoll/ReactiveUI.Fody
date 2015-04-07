@@ -56,7 +56,6 @@ namespace ReactiveUI.Fody
                     var constructors = targetType.Methods.Where(x => x.IsConstructor);
                     foreach (var constructor in constructors)
                     {
-                        LogInfo(oldFieldDefinition.ToString());
                         var fieldAssignment = constructor.Body.Instructions.SingleOrDefault(x => Equals(x.Operand, oldFieldDefinition) || Equals(x.Operand, oldField));
                         if (fieldAssignment != null)
                         {
@@ -72,22 +71,23 @@ namespace ReactiveUI.Fody
                     property.GetMethod.Body.Emit(il =>
                     {
                         il.Emit(OpCodes.Ldarg_0);                                   // this
-                        il.Emit(OpCodes.Ldfld, field);                              // pop -> this.$PropertyName
+                        il.Emit(OpCodes.Ldfld, field.BindDefinition(targetType));   // pop -> this.$PropertyName
                         il.Emit(OpCodes.Ret);                                       // Return the field value that is lying on the stack
                     });
 
                     var genericRaiseAndSetIfChangedMethod = raiseAndSetIfChangedMethod.MakeGenericMethod(targetType, property.PropertyType);
 
                     // Build out the setter which fires the RaiseAndSetIfChanged method
+                    var methodReference = genericRaiseAndSetIfChangedMethod.BindDefinition(targetType);
                     property.SetMethod.Body = new MethodBody(property.SetMethod);
                     property.SetMethod.Body.Emit(il =>
                     {
                         il.Emit(OpCodes.Ldarg_0);                                   // this
                         il.Emit(OpCodes.Ldarg_0);                                   // this
-                        il.Emit(OpCodes.Ldflda, field);                             // pop -> this.$PropertyName
+                        il.Emit(OpCodes.Ldflda, field.BindDefinition(targetType));  // pop -> this.$PropertyName
                         il.Emit(OpCodes.Ldarg_1);                                   // value
                         il.Emit(OpCodes.Ldstr, property.Name);                      // "PropertyName"
-                        il.Emit(OpCodes.Call, genericRaiseAndSetIfChangedMethod);   // pop * 4 -> this.RaiseAndSetIfChanged(this.$PropertyName, value, "PropertyName")
+                        il.Emit(OpCodes.Call, methodReference);                     // pop * 4 -> this.RaiseAndSetIfChanged(this.$PropertyName, value, "PropertyName")
                         il.Emit(OpCodes.Pop);                                       // We don't care about the result of RaiseAndSetIfChanged, so pop it off the stack (stack is now empty)
                         il.Emit(OpCodes.Ret);                                       // Return out of the function
                     });
