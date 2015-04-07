@@ -2,12 +2,12 @@
 <package >
   <metadata>
     <id>ReactiveUI.Fody</id>
-    <version>1.0.33</version>
+    <version>1.0.36</version>
     <authors>kirk</authors>
     <owners>kirk</owners>
     <projectUrl>https://github.com/kswoll/ReactiveUI.Fody</projectUrl>
     <licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
-	<releaseNotes>Fix bug when using auto property initializers on reactive properties.</releaseNotes>
+	<releaseNotes>Fix some other bugs around properties in generic types.</releaseNotes>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Fody extension to generate RaisePropertyChange notifications for properties and ObservableAsPropertyHelper properties.</description>
     <copyright>Copyright 2015</copyright>

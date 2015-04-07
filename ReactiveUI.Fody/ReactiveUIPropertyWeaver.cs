@@ -75,10 +75,20 @@ namespace ReactiveUI.Fody
                         il.Emit(OpCodes.Ret);                                       // Return the field value that is lying on the stack
                     });
 
-                    var genericRaiseAndSetIfChangedMethod = raiseAndSetIfChangedMethod.MakeGenericMethod(targetType, property.PropertyType);
+                    TypeReference genericTargetType = targetType;
+                    if (targetType.HasGenericParameters)
+                    {
+                        var genericDeclaration = new GenericInstanceType(targetType);
+                        foreach (var parameter in targetType.GenericParameters)
+                        {
+                            genericDeclaration.GenericArguments.Add(parameter);
+                        }
+                        genericTargetType = genericDeclaration;
+                    }
+                    
+                    var methodReference = raiseAndSetIfChangedMethod.MakeGenericMethod(genericTargetType, property.PropertyType);
 
                     // Build out the setter which fires the RaiseAndSetIfChanged method
-                    var methodReference = genericRaiseAndSetIfChangedMethod.BindDefinition(targetType);
                     property.SetMethod.Body = new MethodBody(property.SetMethod);
                     property.SetMethod.Body.Emit(il =>
                     {

@@ -66,7 +66,7 @@ namespace ReactiveUI.Fody
 
             return reference;
         }
-
+        /*
         public static MethodReference BindDefinition(this MethodReference method, TypeReference genericTypeDefinition)
         {
             if (!genericTypeDefinition.HasGenericParameters)
@@ -87,7 +87,7 @@ namespace ReactiveUI.Fody
 
             return reference;
         }
-
+        */
         public static FieldReference BindDefinition(this FieldReference field, TypeReference genericTypeDefinition)
         {
             if (!genericTypeDefinition.HasGenericParameters)
