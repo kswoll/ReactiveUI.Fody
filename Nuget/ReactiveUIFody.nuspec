@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>ReactiveUI.Fody</id>
-    <version>1.0.36</version>
+    <version>1.0.45</version>
     <authors>kirk</authors>
     <owners>kirk</owners>
     <projectUrl>https://github.com/kswoll/ReactiveUI.Fody</projectUrl>

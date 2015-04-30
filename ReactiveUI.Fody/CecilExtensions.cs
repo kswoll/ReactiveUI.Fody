@@ -21,20 +21,24 @@ namespace ReactiveUI.Fody
             return result;
         }
 
-        public static bool IsAssignableFrom(this TypeReference baseType, TypeReference type)
+        public static bool IsAssignableFrom(this TypeReference baseType, TypeReference type, Action<string> logger = null)
         {
-            return baseType.Resolve().IsAssignableFrom(type.Resolve());
+            return baseType.Resolve().IsAssignableFrom(type.Resolve(), logger);
         }
 
-        public static bool IsAssignableFrom(this TypeDefinition baseType, TypeDefinition type)
+        public static bool IsAssignableFrom(this TypeDefinition baseType, TypeDefinition type, Action<string> logger = null)
         {
+            logger = logger ?? (x => {});
+
             Queue<TypeDefinition> queue = new Queue<TypeDefinition>();
             queue.Enqueue(type);
 
             while (queue.Any())
             {
                 var current = queue.Dequeue();
-                if (Equals(baseType, current))
+                logger(current.FullName);
+
+                if (baseType.FullName == current.FullName)
                     return true;
 
                 if (current.BaseType != null)
@@ -116,5 +120,26 @@ namespace ReactiveUI.Fody
             }
             return result;
         }
+/*
+
+        public static IEnumerable<TypeDefinition> GetAllTypes(this ModuleDefinition module)
+        {
+            var stack = new Stack<TypeDefinition>();
+            foreach (var type in module.Types)
+            {
+                stack.Push(type);
+            }
+            while (stack.Any())
+            {
+                var current = stack.Pop();
+                yield return current;
+
+                foreach (var nestedType in current.NestedTypes)
+                {
+                    stack.Push(nestedType);
+                }
+            }
+        }
+*/
     }
 }
