@@ -15,7 +15,7 @@ namespace ReactiveUI.Fody.Helpers
             var propertyInfo = property.GetPropertyInfo();
             if (propertyInfo == null)
                 throw new Exception("Could not resolve expression " + property + " into a property.");
-            var field = propertyInfo.DeclaringType.GetField("$" + propertyInfo.Name, BindingFlags.NonPublic | BindingFlags.Instance);
+            var field = propertyInfo.DeclaringType.GetTypeInfo().GetDeclaredField("$" + propertyInfo.Name);
             if (field == null)
                 throw new Exception("Backing field not found for " + propertyInfo);
             field.SetValue(source, result);
