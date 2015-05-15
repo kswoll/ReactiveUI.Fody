@@ -18,11 +18,11 @@ namespace ReactiveUI.Fody
             var reactiveUI = ModuleDefinition.AssemblyReferences.Where(x => x.Name == "ReactiveUI").OrderByDescending(x => x.Version).FirstOrDefault();
             if (reactiveUI == null)
                 throw new Exception("Could not find assembly: ReactiveUI (" + string.Join(", ", ModuleDefinition.AssemblyReferences.Select(x => x.Name)) + ")");
-            LogInfo.Invoke(string.Format("{0} {1}", reactiveUI.Name, reactiveUI.Version));
+            LogInfo(string.Format("{0} {1}", reactiveUI.Name, reactiveUI.Version));
             var helpers = ModuleDefinition.AssemblyReferences.Where(x => x.Name == "ReactiveUI.Fody.Helpers").OrderByDescending(x => x.Version).FirstOrDefault();
             if (helpers == null)
                 throw new Exception("Could not find assembly: ReactiveUI.Fody.Helpers (" + string.Join(", ", ModuleDefinition.AssemblyReferences.Select(x => x.Name)) + ")");
-            LogInfo.Invoke(string.Format("{0} {1}", helpers.Name, helpers.Version));
+            LogInfo(string.Format("{0} {1}", helpers.Name, helpers.Version));
 
             var reactiveObject = ModuleDefinition.FindType("ReactiveUI", "ReactiveObject", reactiveUI);
 
