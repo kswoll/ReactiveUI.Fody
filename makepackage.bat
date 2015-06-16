@@ -7,6 +7,7 @@ cd Nuget
 mkdir build
 cd build
 
+copy ..\Nuget.exe .
 copy ..\ReactiveUIFody.nuspec .
 
 mkdir lib
