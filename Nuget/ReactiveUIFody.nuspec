@@ -1,8 +1,8 @@
-<?xml version="1.0"?>
-<package >
+
+<package>
   <metadata>
     <id>ReactiveUI.Fody</id>
-    <version>1.0.49</version>
+    <version>1.0.61</version>
     <authors>kirk</authors>
     <owners>kirk</owners>
     <projectUrl>https://github.com/kswoll/ReactiveUI.Fody</projectUrl>

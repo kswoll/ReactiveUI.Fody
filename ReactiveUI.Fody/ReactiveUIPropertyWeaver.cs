@@ -54,6 +54,8 @@ namespace ReactiveUI.Fody
                     var field = new FieldDefinition("$" + property.Name, FieldAttributes.Private, property.PropertyType);
                     targetType.Fields.Add(field);
 
+                    LogInfo("$$$2!!!" + field.Name + ", " + field.FieldType);
+
                     // Remove old field (the generated backing field for the auto property)
                     var oldField = (FieldReference)property.GetMethod.Body.Instructions.Where(x => x.Operand is FieldReference).Single().Operand;
                     var oldFieldDefinition = oldField.Resolve();

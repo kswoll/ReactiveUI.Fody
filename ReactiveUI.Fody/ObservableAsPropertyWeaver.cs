@@ -32,7 +32,7 @@ namespace ReactiveUI.Fody
             var observableAsPropertyHelper = ModuleDefinition.FindType("ReactiveUI", "ObservableAsPropertyHelper`1", reactiveUI, "T");
             var observableAsPropertyAttribute = ModuleDefinition.FindType("ReactiveUI.Fody.Helpers", "ObservableAsPropertyAttribute", helpers);
             var observableAsPropertyHelperGetValue = ModuleDefinition.Import(observableAsPropertyHelper.Resolve().Properties.Single(x => x.Name == "Value").GetMethod);
-            var exceptionType = ModuleDefinition.FindType("System", "Exception");
+            var exceptionType = ModuleDefinition.Import(typeof(Exception));
             var exceptionConstructor = exceptionType.Resolve().GetConstructors().Single(x => x.Parameters.Count == 1);
 
             foreach (var targetType in targetTypes)
@@ -50,6 +50,8 @@ namespace ReactiveUI.Fody
                     // It's an auto-property, so remove the generated field
                     if (property.SetMethod != null)
                     {
+                        LogInfo("$$$Auto Property Field: " + field.Name + ", " + field.FieldType);
+
                         // Remove old field (the generated backing field for the auto property)
                         var oldField = (FieldReference)property.GetMethod.Body.Instructions.Where(x => x.Operand is FieldReference).Single().Operand;
                         var oldFieldDefinition = oldField.Resolve();
@@ -60,7 +62,7 @@ namespace ReactiveUI.Fody
                         property.SetMethod.Body.Emit(il =>
                         {
                             il.Emit(OpCodes.Ldstr, "Never call the setter of an ObservabeAsPropertyHelper property.");
-                            il.Emit(OpCodes.Newobj, exceptionType);
+                            il.Emit(OpCodes.Newobj, exceptionConstructor);
                             il.Emit(OpCodes.Throw);
                             il.Emit(OpCodes.Ret);
                         });
