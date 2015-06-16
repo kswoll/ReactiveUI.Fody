@@ -32,6 +32,8 @@ namespace ReactiveUI.Fody
             var observableAsPropertyHelper = ModuleDefinition.FindType("ReactiveUI", "ObservableAsPropertyHelper`1", reactiveUI, "T");
             var observableAsPropertyAttribute = ModuleDefinition.FindType("ReactiveUI.Fody.Helpers", "ObservableAsPropertyAttribute", helpers);
             var observableAsPropertyHelperGetValue = ModuleDefinition.Import(observableAsPropertyHelper.Resolve().Properties.Single(x => x.Name == "Value").GetMethod);
+            var exceptionType = ModuleDefinition.FindType("System", "Exception");
+            var exceptionConstructor = exceptionType.Resolve().GetConstructors().Single(x => x.Parameters.Count == 1);
 
             foreach (var targetType in targetTypes)
             {
@@ -45,9 +47,24 @@ namespace ReactiveUI.Fody
                     var field = new FieldDefinition("$" + property.Name, FieldAttributes.Private, genericObservableAsPropertyHelper);
                     targetType.Fields.Add(field);
 
-                    // We're re-implementing the getter since the original definition was an extern method.  So remove that
-                    // stub.
-                    targetType.Methods.Remove(property.GetMethod);
+                    // It's an auto-property, so remove the generated field
+                    if (property.SetMethod != null)
+                    {
+                        // Remove old field (the generated backing field for the auto property)
+                        var oldField = (FieldReference)property.GetMethod.Body.Instructions.Where(x => x.Operand is FieldReference).Single().Operand;
+                        var oldFieldDefinition = oldField.Resolve();
+                        targetType.Fields.Remove(oldFieldDefinition);                        
+
+                        // Re-implement setter to throw an exception
+                        property.SetMethod.Body = new MethodBody(property.SetMethod);
+                        property.SetMethod.Body.Emit(il =>
+                        {
+                            il.Emit(OpCodes.Ldstr, "Never call the setter of an ObservabeAsPropertyHelper property.");
+                            il.Emit(OpCodes.Newobj, exceptionType);
+                            il.Emit(OpCodes.Throw);
+                            il.Emit(OpCodes.Ret);
+                        });
+                    }
 
                     property.GetMethod.Body = new MethodBody(property.GetMethod);
                     property.GetMethod.Body.Emit(il =>
@@ -57,7 +74,6 @@ namespace ReactiveUI.Fody
                         il.Emit(OpCodes.Callvirt, genericObservableAsPropertyHelperGetValue);   // pop -> this.$PropertyName.Value
                         il.Emit(OpCodes.Ret);                                                   // Return the value that is on the stack
                     });
-                    targetType.Methods.Add(property.GetMethod);
                 }
             }
         }         
