@@ -99,6 +99,10 @@ namespace ReactiveUI.Fody
                     var methodReference = raiseAndSetIfChangedMethod.MakeGenericMethod(genericTargetType, property.PropertyType);
 
                     // Build out the setter which fires the RaiseAndSetIfChanged method
+                    if (property.SetMethod == null)
+                    {
+                        throw new Exception("[Reactive] is decorating " + property.DeclaringType.FullName + "." + property.Name + ", but the property has no setter so there would be nothing to react to.  Consider removing the attribute.");
+                    }
                     property.SetMethod.Body = new MethodBody(property.SetMethod);
                     property.SetMethod.Body.Emit(il =>
                     {
