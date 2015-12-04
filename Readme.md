@@ -1,4 +1,7 @@
 # ReactiveUI.Fody
+
+[![Windows Build Status]](https://ci.appveyor.com/project/jgm/cmark)
+
 C# Fody extension to generate RaisePropertyChange notifications for properties and ObservableAsPropertyHelper properties.
 
 ## Install ##
