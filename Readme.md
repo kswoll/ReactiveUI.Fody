@@ -50,3 +50,5 @@ should use the provided `.ToPropertyEx` extension method provided by this librar
     .ToPropertyEx(this, x => x.PersonInfo);
     
 This extension will assign the auto-generated field for you rather than relying on the `out` parameter.
+
+[Windows Build Status]: https://ci.appveyor.com/api/projects/status/github/kswoll/ReactiveUI.Fody
