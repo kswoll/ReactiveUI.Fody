@@ -9,7 +9,12 @@ Nuget package ReactiveUI.Fody:
 
 > Install-Package ReactiveUI.Fody
 
-Currently, you need to add `ReactiveUI` to your FodyWeavers.xml manually.
+Currently, you need to manually add `<ReactiveUI />` to your Fody weavers configuration. If this is your first Fody plugin then `FodyWeavers.xml` should look like this after the change:
+
+    <?xml version="1.0" encoding="utf-8" ?>
+    <Weavers>
+        <ReactiveUI />
+    </Weavers>
 
 ##Description##
 
