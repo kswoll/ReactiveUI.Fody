@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -51,7 +52,7 @@ namespace ReactiveUI.Fody
                     targetType.Fields.Add(field);
 
                     // It's an auto-property, so remove the generated field
-                    if (property.SetMethod != null)
+                    if (property.SetMethod != null && property.SetMethod.HasBody)
                     {
                         // Remove old field (the generated backing field for the auto property)
                         var oldField = (FieldReference)property.GetMethod.Body.Instructions.Where(x => x.Operand is FieldReference).Single().Operand;
