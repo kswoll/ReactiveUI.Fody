@@ -57,6 +57,12 @@ namespace ReactiveUI.Fody
             {
                 foreach (var property in targetType.Properties.Where(x => x.IsDefined(reactiveAttribute)).ToArray())
                 {
+                    if (property.SetMethod == null)
+                    {
+                        LogError($"Property {property.DeclaringType.FullName}.{property.Name} has no setter, therefore it is not possible for the property to change, and thus should not be marked with [Reactive]");
+                        continue;
+                    }
+
                     // Declare a field to store the property value
                     var field = new FieldDefinition("$" + property.Name, FieldAttributes.Private, property.PropertyType);
                     targetType.Fields.Add(field);
