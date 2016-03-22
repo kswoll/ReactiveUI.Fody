@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -76,13 +75,53 @@ namespace ReactiveUI.Fody
                     property.GetMethod.Body = new MethodBody(property.GetMethod);
                     property.GetMethod.Body.Emit(il =>
                     {
+                        var isValid = il.Create(OpCodes.Nop);
                         il.Emit(OpCodes.Ldarg_0);                                               // this
                         il.Emit(OpCodes.Ldfld, field.BindDefinition(targetType));               // pop -> this.$PropertyName
+                        il.Emit(OpCodes.Dup);                                                   // Put an extra copy of this.$PropertyName onto the stack
+                        il.Emit(OpCodes.Brtrue, isValid);                                       // If the helper is null, return the default value for the property
+                        il.Emit(OpCodes.Pop);                                                   // Drop this.$PropertyName
+                        EmitDefaultValue(il, property.PropertyType);                            // Put the default value onto the stack
+                        il.Emit(OpCodes.Ret);                                                   // Return that default value
+                        il.Append(isValid);                                                     // Add a marker for if the helper is not null
                         il.Emit(OpCodes.Callvirt, genericObservableAsPropertyHelperGetValue);   // pop -> this.$PropertyName.Value
                         il.Emit(OpCodes.Ret);                                                   // Return the value that is on the stack
                     });
                 }
             }
-        }         
+        }
+                 
+        public void EmitDefaultValue(ILProcessor il, TypeReference type)
+        {
+            if (type.CompareTo(ModuleDefinition.TypeSystem.Boolean) || type.CompareTo(ModuleDefinition.TypeSystem.Byte) ||
+                type.CompareTo(ModuleDefinition.TypeSystem.Int16) || type.CompareTo(ModuleDefinition.TypeSystem.Int32))
+            {
+                il.Emit(OpCodes.Ldc_I4_0);
+            }
+            else if (type.CompareTo(ModuleDefinition.TypeSystem.Single))
+            {
+                il.Emit(OpCodes.Ldc_R4, (float)0);
+            }
+            else if (type.CompareTo(ModuleDefinition.TypeSystem.Int64))
+            {
+                il.Emit(OpCodes.Ldc_I8);
+            }
+            else if (type.CompareTo(ModuleDefinition.TypeSystem.Double))
+            {
+                il.Emit(OpCodes.Conv_R8);
+            }
+            else if (type.IsGenericParameter || type.IsValueType)
+            {
+                var local = new VariableDefinition(type);
+                il.Body.Variables.Add(local);
+                il.Emit(OpCodes.Ldloca_S, local);
+                il.Emit(OpCodes.Initobj, type);
+                il.Emit(OpCodes.Ldloc, local);
+            }
+            else
+            {
+                il.Emit(OpCodes.Ldnull);
+            }
+        }
     }
 }

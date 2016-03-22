@@ -120,6 +120,12 @@ namespace ReactiveUI.Fody
             }
             return result;
         }
+
+        public static bool CompareTo(this TypeReference type, TypeReference compareTo)
+        {
+            return type.FullName == compareTo.FullName;
+        }
+
 /*
 
         public static IEnumerable<TypeDefinition> GetAllTypes(this ModuleDefinition module)

@@ -15,3 +15,5 @@ Nuget/ReactiveUI.Fody.1.0.26/
 ReactiveUI.Fody.1.0.26/
 ReactiveUI.Fody.Helpers.Pcl/obj/
 ReactiveUI.Fody.Helpers.Pcl/bin/
+ReactiveUI.Fody.Tests/bin/
+ReactiveUI.Fody.Tests/obj/
