@@ -40,8 +40,8 @@
       <HintPath>..\packages\reactiveui-core.6.4.0.1\lib\Net45\ReactiveUI.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="ReactiveUI.Fody.Helpers, Version=1.1.27.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ReactiveUI.Fody.1.1.27\lib\net45\ReactiveUI.Fody.Helpers.dll</HintPath>
+    <Reference Include="ReactiveUI.Fody.Helpers, Version=1.1.29.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ReactiveUI.Fody.1.1.29\lib\net45\ReactiveUI.Fody.Helpers.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Splat, Version=1.6.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -80,6 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Issues\Issue10Tests.cs" />
+    <Compile Include="Issues\Issue9Tests.cs" />
     <Compile Include="ObservableAsPropertyTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

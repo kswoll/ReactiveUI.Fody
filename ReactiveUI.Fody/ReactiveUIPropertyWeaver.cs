@@ -52,7 +52,7 @@ namespace ReactiveUI.Fody
 
             foreach (var targetType in targetTypes)
             {
-                foreach (var property in targetType.Properties.Where(x => x.IsDefined(reactiveAttribute)).ToArray())
+                foreach (var property in targetType.Properties.Where(x => x.IsDefined(reactiveAttribute) || (x.GetMethod?.IsDefined(reactiveAttribute) ?? false)).ToArray())
                 {
                     if (property.SetMethod == null)
                     {
