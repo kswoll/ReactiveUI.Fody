@@ -108,7 +108,7 @@ namespace ReactiveUI.Fody
             }
             else if (type.CompareTo(ModuleDefinition.TypeSystem.Double))
             {
-                il.Emit(OpCodes.Conv_R8);
+                il.Emit(OpCodes.Ldc_R8, (double)0);
             }
             else if (type.IsGenericParameter || type.IsValueType)
             {
