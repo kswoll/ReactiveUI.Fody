@@ -2,7 +2,7 @@
 
 namespace ReactiveUI.Fody.Helpers
 {
-    [AttributeUsage(AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Method)]
     public class ObservableAsPropertyAttribute : Attribute
     {
     }
