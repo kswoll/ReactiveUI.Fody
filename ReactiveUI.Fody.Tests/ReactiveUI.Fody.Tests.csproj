@@ -77,7 +77,7 @@
   <ItemGroup>
     <Compile Include="Issues\Issue10Tests.cs" />
     <Compile Include="Issues\Issue13Tests.cs" />
-    <Compile Include="Issues\Issue9Tests.cs" />
+    <Compile Include="Issues\Issue11Tests.cs" />
     <Compile Include="ObservableAsPropertyTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
