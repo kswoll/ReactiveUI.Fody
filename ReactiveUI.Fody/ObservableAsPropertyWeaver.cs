@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -21,14 +22,14 @@ namespace ReactiveUI.Fody
                 LogInfo("Could not find assembly: ReactiveUI (" + string.Join(", ", ModuleDefinition.AssemblyReferences.Select(x => x.Name)) + ")");
                 return;
             }
-            LogInfo(string.Format("{0} {1}", reactiveUI.Name, reactiveUI.Version));
+            LogInfo($"{reactiveUI.Name} {reactiveUI.Version}");
             var helpers = ModuleDefinition.AssemblyReferences.Where(x => x.Name == "ReactiveUI.Fody.Helpers").OrderByDescending(x => x.Version).FirstOrDefault();
             if (helpers == null)
             {
                 LogInfo("Could not find assembly: ReactiveUI.Fody.Helpers (" + string.Join(", ", ModuleDefinition.AssemblyReferences.Select(x => x.Name)) + ")");
                 return;
             }
-            LogInfo(string.Format("{0} {1}", helpers.Name, helpers.Version));
+            LogInfo($"{helpers.Name} {helpers.Version}");
 
             var reactiveObject = ModuleDefinition.FindType("ReactiveUI", "ReactiveObject", reactiveUI);
 
@@ -43,7 +44,7 @@ namespace ReactiveUI.Fody
 
             foreach (var targetType in targetTypes)
             {
-                foreach (var property in targetType.Properties.Where(x => x.IsDefined(observableAsPropertyAttribute)).ToArray())
+                foreach (var property in targetType.Properties.Where(x => x.IsDefined(observableAsPropertyAttribute) || (x.GetMethod?.IsDefined(observableAsPropertyAttribute) ?? false)).ToArray())
                 {
                     var genericObservableAsPropertyHelper = observableAsPropertyHelper.MakeGenericInstanceType(property.PropertyType);
                     var genericObservableAsPropertyHelperGetValue = observableAsPropertyHelperGetValue.Bind(genericObservableAsPropertyHelper);
@@ -81,7 +82,7 @@ namespace ReactiveUI.Fody
                         il.Emit(OpCodes.Dup);                                                   // Put an extra copy of this.$PropertyName onto the stack
                         il.Emit(OpCodes.Brtrue, isValid);                                       // If the helper is null, return the default value for the property
                         il.Emit(OpCodes.Pop);                                                   // Drop this.$PropertyName
-                        EmitDefaultValue(il, property.PropertyType);                            // Put the default value onto the stack
+                        EmitDefaultValue(property.GetMethod.Body, il, property.PropertyType);   // Put the default value onto the stack
                         il.Emit(OpCodes.Ret);                                                   // Return that default value
                         il.Append(isValid);                                                     // Add a marker for if the helper is not null
                         il.Emit(OpCodes.Callvirt, genericObservableAsPropertyHelperGetValue);   // pop -> this.$PropertyName.Value
@@ -91,7 +92,7 @@ namespace ReactiveUI.Fody
             }
         }
                  
-        public void EmitDefaultValue(ILProcessor il, TypeReference type)
+        public void EmitDefaultValue(MethodBody methodBody, ILProcessor il, TypeReference type)
         {
             if (type.CompareTo(ModuleDefinition.TypeSystem.Boolean) || type.CompareTo(ModuleDefinition.TypeSystem.Byte) ||
                 type.CompareTo(ModuleDefinition.TypeSystem.Int16) || type.CompareTo(ModuleDefinition.TypeSystem.Int32))
@@ -112,6 +113,7 @@ namespace ReactiveUI.Fody
             }
             else if (type.IsGenericParameter || type.IsValueType)
             {
+                methodBody.InitLocals = true;
                 var local = new VariableDefinition(type);
                 il.Body.Variables.Add(local);
                 il.Emit(OpCodes.Ldloca_S, local);

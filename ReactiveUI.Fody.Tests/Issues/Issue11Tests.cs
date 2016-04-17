@@ -16,7 +16,7 @@ namespace ReactiveUI.Fody.Tests.Issues
 
         public class TestModel : ReactiveObject
         {
-            public extern string MyProperty { [ObservableAsProperty] get; }
+            public extern string MyProperty { [ObservableAsProperty]get; }
 
             public TestModel(string myProperty)
             {

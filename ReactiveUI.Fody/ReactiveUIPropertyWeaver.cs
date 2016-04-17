@@ -28,14 +28,14 @@ namespace ReactiveUI.Fody
                 LogInfo("Could not find assembly: ReactiveUI (" + string.Join(", ", ModuleDefinition.AssemblyReferences.Select(x => x.Name)) + ")");
                 return;
             }
-            LogInfo(string.Format("{0} {1}", reactiveUI.Name, reactiveUI.Version));
+            LogInfo($"{reactiveUI.Name} {reactiveUI.Version}");
             var helpers = ModuleDefinition.AssemblyReferences.Where(x => x.Name == "ReactiveUI.Fody.Helpers").OrderByDescending(x => x.Version).FirstOrDefault();
             if (helpers == null)
             {
                 LogInfo("Could not find assembly: ReactiveUI.Fody.Helpers (" + string.Join(", ", ModuleDefinition.AssemblyReferences.Select(x => x.Name)) + ")");
                 return;
             }
-            LogInfo(string.Format("{0} {1}", helpers.Name, helpers.Version));
+            LogInfo($"{helpers.Name} {helpers.Version}");
             var reactiveObject = new TypeReference("ReactiveUI", "IReactiveObject", ModuleDefinition, reactiveUI);
             var targetTypes = ModuleDefinition.GetAllTypes().Where(x => x.BaseType != null && reactiveObject.IsAssignableFrom(x.BaseType)).ToArray();
             var reactiveObjectExtensions = new TypeReference("ReactiveUI", "IReactiveObjectExtensions", ModuleDefinition, reactiveUI).Resolve();
@@ -52,7 +52,7 @@ namespace ReactiveUI.Fody
 
             foreach (var targetType in targetTypes)
             {
-                foreach (var property in targetType.Properties.Where(x => x.IsDefined(reactiveAttribute) || (x.GetMethod?.IsDefined(reactiveAttribute) ?? false)).ToArray())
+                foreach (var property in targetType.Properties.Where(x => x.IsDefined(reactiveAttribute)).ToArray())
                 {
                     if (property.SetMethod == null)
                     {
