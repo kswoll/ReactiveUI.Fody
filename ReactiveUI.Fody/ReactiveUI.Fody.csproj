@@ -72,6 +72,7 @@
     <Compile Include="ModuleWeaver.cs" />
     <Compile Include="ObservableAsPropertyWeaver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReactiveDependencyPropertyWeaver.cs" />
     <Compile Include="ReactiveUIPropertyWeaver.cs" />
   </ItemGroup>
   <ItemGroup>

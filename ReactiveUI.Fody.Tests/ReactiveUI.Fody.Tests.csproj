@@ -79,6 +79,7 @@
     <Compile Include="Issues\Issue11Tests.cs" />
     <Compile Include="ObservableAsPropertyTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReactiveDependencyTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

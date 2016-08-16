@@ -29,6 +29,14 @@ namespace ReactiveUI.Fody
                 LogInfo = LogInfo
             };
             observableAsPropertyWeaver.Execute();
+
+            var reactiveDependencyWeaver = new ReactiveDependencyPropertyWeaver
+            {
+                ModuleDefinition = ModuleDefinition,
+                LogInfo = LogInfo,
+                LogError = LogError
+            };
+            reactiveDependencyWeaver.Execute();
         }
     }
 }
