@@ -2,4 +2,5 @@
 <Weavers>
     <ObservableAsPropertyWeaver />
     <ReactiveUIPropertyWeaver />
+    <ReactiveDependencyPropertyWeaver />
 </Weavers>
