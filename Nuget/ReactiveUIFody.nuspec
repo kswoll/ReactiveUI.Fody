@@ -14,8 +14,8 @@
     <tags>reactiveui fody</tags>
     <dependencies>
       <dependency id="Fody" version="1.0" />
-	  <dependency id="reactiveui" version="7.0.0.1478039116" targetFramework="net45" />
-	  <dependency id="reactiveui-core" version="7.0.0.1478039116" targetFramework="net45" />
+	  <dependency id="reactiveui" version="7.0.0.1478039116" />
+	  <dependency id="reactiveui-core" version="7.0.0.1478039116" />
 	  <dependency id="Splat" version="1.6.0" />
     </dependencies>
   </metadata>
