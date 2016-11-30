@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Microsoft.CodeAnalysis;
@@ -34,6 +35,7 @@ namespace ReactiveUI.Fody.CodeFix
             context.RegisterSymbolAction(ChangePropertyModifierRule, SymbolKind.Property);
         }
 
+
         private static void ChangePropertyModifierRule(SymbolAnalysisContext context)
         {
             var propertySymbol = context.Symbol as IPropertySymbol;
@@ -47,6 +49,27 @@ namespace ReactiveUI.Fody.CodeFix
 
             if (propertySymbol != null)
             {
+                var property = propertySymbol.DeclaringSyntaxReferences[0].GetSyntax() as PropertyDeclarationSyntax;
+                Debug.Assert(property != null, "property != null");
+                var getter = property.AccessorList?.Accessors.FirstOrDefault(x => x.IsKind(SyntaxKind.GetAccessorDeclaration));
+                var setter = property.AccessorList?.Accessors.FirstOrDefault(x => x.IsKind(SyntaxKind.SetAccessorDeclaration));
+
+                if (setter?.Body == null)
+                    return;
+                if (getter?.Body == null)
+                    return;
+
+                if (setter.Body.Statements.Count != 1)
+                    return;
+
+                var statement = setter.Body;
+                if (!statement.ToString().Contains("RaiseAndSetIfChanged"))
+                    return;
+                var idiom = $"{{this.RaiseAndSetIfChanged(ref_{propertySymbol.Name},value);}}";
+                var noWhiteSpace = System.Text.RegularExpressions.Regex.Replace(statement.ToString(), @"\s+", "");
+
+                if (idiom != noWhiteSpace)
+                    return;
 
                 // Add "contextual" menu to change property modifiers.
                 var diagnostic = Diagnostic.Create(Rule, propertySymbol.Locations[0], propertySymbol.Name);
