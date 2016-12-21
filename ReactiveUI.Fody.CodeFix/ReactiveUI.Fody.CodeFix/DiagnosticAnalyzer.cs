@@ -50,7 +50,9 @@ namespace ReactiveUI.Fody.CodeFix
             if (propertySymbol != null)
             {
                 var property = propertySymbol.DeclaringSyntaxReferences[0].GetSyntax() as PropertyDeclarationSyntax;
-                Debug.Assert(property != null, "property != null");
+                if (property == null)
+                    return;
+
                 var getter = property.AccessorList?.Accessors.FirstOrDefault(x => x.IsKind(SyntaxKind.GetAccessorDeclaration));
                 var setter = property.AccessorList?.Accessors.FirstOrDefault(x => x.IsKind(SyntaxKind.SetAccessorDeclaration));
 
