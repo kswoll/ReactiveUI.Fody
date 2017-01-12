@@ -115,6 +115,12 @@
       <Private>False</Private>
     </Reference>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\ReactiveUI.Fody.Helpers.Pcl\ReactiveUI.Fody.Helpers.Pcl.csproj">
+      <Project>{8509509A-17C7-4CF0-84AD-5DD208446766}</Project>
+      <Name>ReactiveUI.Fody.Helpers.Pcl</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\v4.6\Microsoft.Portable.CSharp.targets" />
   <Target Name="AfterBuild">
     <GetAssemblyIdentity AssemblyFiles="$(OutDir)\$(AssemblyName).dll">

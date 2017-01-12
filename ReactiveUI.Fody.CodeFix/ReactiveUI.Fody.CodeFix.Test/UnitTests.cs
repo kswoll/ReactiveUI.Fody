@@ -73,7 +73,7 @@ namespace ConsoleApplication1
     class TypeName
     {
         [Reactive]
-        int Foo { get; set; }
+        public int Foo { get; set; }
     }
 }";
 

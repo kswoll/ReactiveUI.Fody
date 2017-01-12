@@ -15,6 +15,7 @@ using Microsoft.CodeAnalysis.Text;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.MSBuild;
+using ReactiveUI.Fody.Helpers;
 
 namespace ReactiveUI.Fody.CodeFix
 {
@@ -38,6 +39,8 @@ namespace ReactiveUI.Fody.CodeFix
             return PropertyDeclaration (IdentifierName(typeName), Identifier(propName))
                 .WithAttributeLists
                     ( SingletonList ( AttributeList ( SingletonSeparatedList ( Attribute ( IdentifierName("Reactive"))))))
+                .AddModifiers(
+                    SyntaxFactory.Token(SyntaxKind.PublicKeyword))
                 .WithAccessorList
                     (
                     AccessorList
@@ -50,6 +53,7 @@ namespace ReactiveUI.Fody.CodeFix
                                 AccessorDeclaration ( SyntaxKind.SetAccessorDeclaration) .WithSemicolonToken ( Token(SyntaxKind.SemicolonToken))
                             })));
         }
+        [Reactive] public int FooProp { get; set; }
 
 
         private async static Task<Document> ChangePropertySetAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
