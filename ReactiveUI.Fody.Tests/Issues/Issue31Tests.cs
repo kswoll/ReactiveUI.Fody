@@ -10,7 +10,7 @@ namespace ReactiveUI.Fody.Tests.Issues
     public class Issue31Tests
     {
         [Test]
-        public void ExceptionPropertyInfo()
+        public void ExceptionPropertyInfoForReactiveProperty()
         {
             try
             {
@@ -18,13 +18,13 @@ namespace ReactiveUI.Fody.Tests.Issues
 
                 try
                 {
-                    new TestModel();
+                    var model = new ReactivePropertyModel();
+                    model.MyProperty = "foo";
                     Assert.Fail();
                 }
-                catch (UnhandledErrorException ex)
+                catch (LogPropertyOnErrorException ex)
                 {
-                    var propertyException = (LogPropertyOnErrorException)ex.InnerException;
-                    Assert.AreEqual(nameof(TestModel.MyProperty), propertyException.Property);
+                    Assert.AreEqual(nameof(ObservableAsPropertyModel.MyProperty), ex.Property);
                 }
             }
             finally
@@ -33,13 +33,50 @@ namespace ReactiveUI.Fody.Tests.Issues
             }
         }
 
-        public class TestModel : ReactiveObject
+        [Test]
+        public void ExceptionPropertyInfoForObservableAsProperty()
+        {
+            try
+            {
+                GlobalSettings.IsLogPropertyOnErrorEnabled = true;
+
+                try
+                {
+                    new ObservableAsPropertyModel();
+                    Assert.Fail();
+                }
+                catch (UnhandledErrorException ex)
+                {
+                    var propertyException = (LogPropertyOnErrorException)ex.InnerException;
+                    Assert.AreEqual(nameof(ObservableAsPropertyModel.MyProperty), propertyException.Property);
+                }
+            }
+            finally
+            {
+                GlobalSettings.IsLogPropertyOnErrorEnabled = false;
+            }
+        }
+
+        public class ObservableAsPropertyModel : ReactiveObject
         {
             public extern string MyProperty { [ObservableAsProperty]get; }
 
-            public TestModel()
+            public ObservableAsPropertyModel()
             {
                 Observable.Throw<string>(new Exception("Observable error")).ToPropertyEx(this, x => x.MyProperty);
+            }
+        }
+
+        public class ReactivePropertyModel : ReactiveObject
+        {
+            [Reactive]public string MyProperty { get; set; }
+
+            public ReactivePropertyModel()
+            {
+                this.ObservableForProperty(x => x.MyProperty).Subscribe(_ =>
+                {
+                    throw new Exception("Subscribe error");
+                });
             }
         }
     }
