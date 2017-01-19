@@ -22,6 +22,6 @@ namespace ReactiveUI.Fody.Tests
             {
                 Observable.Return("foo").ToPropertyEx(this, x => x.TestProperty);
             }
-        } 
+        }
     }
 }

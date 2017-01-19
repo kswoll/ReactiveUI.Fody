@@ -56,7 +56,7 @@ namespace ReactiveUI.Fody
                     }
 
                     var attribute = facadeProperty.CustomAttributes.First(x => x.AttributeType.FullName == reactiveDependencyAttribute.FullName);
-                    
+
                     var targetNamedArgument = attribute.ConstructorArguments.FirstOrDefault();
                     var targetValue = targetNamedArgument.Value?.ToString();
                     if (string.IsNullOrEmpty(targetValue))
@@ -90,7 +90,7 @@ namespace ReactiveUI.Fody
 
                     // If no target property was specified use this property's name as the target on the decorated object (ala a decorated property)
                     if (string.IsNullOrEmpty(destinationPropertyName)) destinationPropertyName = facadeProperty.Name;
-                    
+
                     if (objDependencyTargetType.Properties.All(x => x.Name != destinationPropertyName))
                     {
                         LogError($"Target property {destinationPropertyName} on dependency of type {objDependencyTargetType.DeclaringType.Name} not found");
@@ -125,7 +125,7 @@ namespace ReactiveUI.Fody
                         var fieldAssignment = constructor.Body.Instructions.SingleOrDefault(x => Equals(x.Operand, oldFieldDefinition) || Equals(x.Operand, oldField));
                         if (fieldAssignment != null)
                         {
-                            // Replace field assignment with a property set (the stack semantics are the same for both, 
+                            // Replace field assignment with a property set (the stack semantics are the same for both,
                             // so happily we don't have to manipulate the bytecode any further.)
                             var setterCall = constructor.Body.GetILProcessor().Create(facadeProperty.SetMethod.IsVirtual ? OpCodes.Callvirt : OpCodes.Call, facadeProperty.SetMethod);
                             constructor.Body.GetILProcessor().Replace(fieldAssignment, setterCall);
@@ -178,7 +178,7 @@ namespace ReactiveUI.Fody
                         il.Emit(OpCodes.Ldarg_0);
                         il.Emit(OpCodes.Ldstr, facadeProperty.Name);                // "PropertyName"
                         il.Emit(OpCodes.Call, methodReference);                     // this.RaisePropertyChanged("PropertyName")
-                        il.Emit(OpCodes.Ret);                                       
+                        il.Emit(OpCodes.Ret);
                     });
                 }
             }
