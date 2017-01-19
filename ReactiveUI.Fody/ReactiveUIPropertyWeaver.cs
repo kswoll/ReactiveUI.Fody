@@ -38,9 +38,9 @@ namespace ReactiveUI.Fody
             LogInfo($"{helpers.Name} {helpers.Version}");
             var reactiveObject = new TypeReference("ReactiveUI", "IReactiveObject", ModuleDefinition, reactiveUI);
             var targetTypes = ModuleDefinition.GetAllTypes().Where(x => x.BaseType != null && reactiveObject.IsAssignableFrom(x.BaseType)).ToArray();
-            var reactivePropertyExtensions = new TypeReference("ReactiveUI.Fody.Helpers", "ReactivePropertyExtensions", ModuleDefinition, reactiveUI).Resolve();
+            var reactivePropertyExtensions = ModuleDefinition.FindType("ReactiveUI.Fody.Helpers", "ReactivePropertyExtensions", helpers).Resolve();
             if (reactivePropertyExtensions == null)
-                throw new Exception("reactiveObjectExtensions is null");
+                throw new Exception("reactivePropertyExtensions is null");
 
             var raiseAndSetIfChangedMethod = ModuleDefinition.Import(reactivePropertyExtensions.Methods.Single(x => x.Name == "RaiseAndSetIfChanged"));
             if (raiseAndSetIfChangedMethod == null)
