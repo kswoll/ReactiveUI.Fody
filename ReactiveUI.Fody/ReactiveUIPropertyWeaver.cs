@@ -7,7 +7,7 @@ using Mono.Cecil.Rocks;
 namespace ReactiveUI.Fody
 {
     /// <summary>
-    /// Weaver that replaces properties marked with `[DataMember]` on subclasses of `ReactiveObject` with an 
+    /// Weaver that replaces properties marked with `[DataMember]` on subclasses of `ReactiveObject` with an
     /// implementation that invokes `RaisePropertyChanged` as is required for reaciveui.
     /// </summary>
     public class ReactiveUIPropertyWeaver
@@ -38,11 +38,11 @@ namespace ReactiveUI.Fody
             LogInfo($"{helpers.Name} {helpers.Version}");
             var reactiveObject = new TypeReference("ReactiveUI", "IReactiveObject", ModuleDefinition, reactiveUI);
             var targetTypes = ModuleDefinition.GetAllTypes().Where(x => x.BaseType != null && reactiveObject.IsAssignableFrom(x.BaseType)).ToArray();
-            var reactiveObjectExtensions = new TypeReference("ReactiveUI", "IReactiveObjectExtensions", ModuleDefinition, reactiveUI).Resolve();
-            if (reactiveObjectExtensions == null)
+            var reactivePropertyExtensions = new TypeReference("ReactiveUI.Fody.Helpers", "ReactivePropertyExtensions", ModuleDefinition, reactiveUI).Resolve();
+            if (reactivePropertyExtensions == null)
                 throw new Exception("reactiveObjectExtensions is null");
 
-            var raiseAndSetIfChangedMethod = ModuleDefinition.Import(reactiveObjectExtensions.Methods.Single(x => x.Name == "RaiseAndSetIfChanged"));
+            var raiseAndSetIfChangedMethod = ModuleDefinition.Import(reactivePropertyExtensions.Methods.Single(x => x.Name == "RaiseAndSetIfChanged"));
             if (raiseAndSetIfChangedMethod == null)
                 throw new Exception("raiseAndSetIfChangedMethod is null");
 
@@ -76,7 +76,7 @@ namespace ReactiveUI.Fody
                         var fieldAssignment = constructor.Body.Instructions.SingleOrDefault(x => Equals(x.Operand, oldFieldDefinition) || Equals(x.Operand, oldField));
                         if (fieldAssignment != null)
                         {
-                            // Replace field assignment with a property set (the stack semantics are the same for both, 
+                            // Replace field assignment with a property set (the stack semantics are the same for both,
                             // so happily we don't have to manipulate the bytecode any further.)
                             var setterCall = constructor.Body.GetILProcessor().Create(property.SetMethod.IsVirtual ? OpCodes.Callvirt : OpCodes.Call, property.SetMethod);
                             constructor.Body.GetILProcessor().Replace(fieldAssignment, setterCall);
@@ -102,7 +102,7 @@ namespace ReactiveUI.Fody
                         }
                         genericTargetType = genericDeclaration;
                     }
-                    
+
                     var methodReference = raiseAndSetIfChangedMethod.MakeGenericMethod(genericTargetType, property.PropertyType);
 
                     // Build out the setter which fires the RaiseAndSetIfChanged method
@@ -124,6 +124,6 @@ namespace ReactiveUI.Fody
                     });
                 }
             }
-        }         
+        }
     }
 }
