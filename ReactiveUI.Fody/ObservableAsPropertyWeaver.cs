@@ -60,7 +60,7 @@ namespace ReactiveUI.Fody
                         // Remove old field (the generated backing field for the auto property)
                         var oldField = (FieldReference)property.GetMethod.Body.Instructions.Where(x => x.Operand is FieldReference).Single().Operand;
                         var oldFieldDefinition = oldField.Resolve();
-                        targetType.Fields.Remove(oldFieldDefinition);                        
+                        targetType.Fields.Remove(oldFieldDefinition);
 
                         // Re-implement setter to throw an exception
                         property.SetMethod.Body = new MethodBody(property.SetMethod);
@@ -91,7 +91,7 @@ namespace ReactiveUI.Fody
                 }
             }
         }
-                 
+
         public void EmitDefaultValue(MethodBody methodBody, ILProcessor il, TypeReference type)
         {
             if (type.CompareTo(ModuleDefinition.TypeSystem.Boolean) || type.CompareTo(ModuleDefinition.TypeSystem.Byte) ||
