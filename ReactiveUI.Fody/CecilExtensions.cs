@@ -46,7 +46,7 @@ namespace ReactiveUI.Fody
 
                 foreach (var @interface in current.Interfaces)
                 {
-                    queue.Enqueue(@interface.InterfaceType.Resolve());
+                    queue.Enqueue(@interface.Resolve());
                 }
             }
 

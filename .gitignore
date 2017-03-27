@@ -19,6 +19,3 @@ ReactiveUI.Fody.Tests/bin/
 ReactiveUI.Fody.Tests/obj/
 Weavers/bin/Weavers.dll
 Weavers/bin/Weavers.pdb
-_ReSharper.Caches/
-ReactiveUI.Fody.Sample/bin/
-ReactiveUI.Fody.Sample/obj/
