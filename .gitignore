@@ -7,6 +7,7 @@ ReactiveUI.Fody/obj/
 ReactiveUI.Fody/bin/
 ReactiveUI.Fody.Helpers.Net45/obj/
 ReactiveUI.Fody.Helpers.Net45/bin/
+ReactiveUI.Fody.Helpers.Net45/bin/
 ReactiveUI.Fody.Helpers.Ios/bin/
 ReactiveUI.Fody.Helpers.Ios/obj/
 ReactiveUI.Fody.Helpers.Android/bin/
@@ -19,3 +20,9 @@ ReactiveUI.Fody.Tests/bin/
 ReactiveUI.Fody.Tests/obj/
 Weavers/bin/Weavers.dll
 Weavers/bin/Weavers.pdb
+ReactiveUI.Fody.CodeFix/ReactiveUI.Fody.CodeFix/bin/
+ReactiveUI.Fody.CodeFix/ReactiveUI.Fody.CodeFix/obj/
+ReactiveUI.Fody.CodeFix/ReactiveUI.Fody.CodeFix.Test/bin/
+ReactiveUI.Fody.CodeFix/ReactiveUI.Fody.CodeFix.Test/obj/
+ReactiveUI.Fody.CodeFix/ReactiveUI.Fody.CodeFix.Vsix/bin/
+ReactiveUI.Fody.CodeFix/ReactiveUI.Fody.CodeFix.Vsix/obj/

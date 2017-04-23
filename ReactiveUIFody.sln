@@ -18,6 +18,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{841EF0
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReactiveUI.Fody.Tests", "ReactiveUI.Fody.Tests\ReactiveUI.Fody.Tests.csproj", "{A735C110-6877-4C3A-8056-9ABC5FB2DD91}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReactiveUI.Fody.CodeFix", "ReactiveUI.Fody.CodeFix\ReactiveUI.Fody.CodeFix\ReactiveUI.Fody.CodeFix.csproj", "{973B467F-2916-48D8-8075-67F4E3C320D1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReactiveUI.Fody.CodeFix.Test", "ReactiveUI.Fody.CodeFix\ReactiveUI.Fody.CodeFix.Test\ReactiveUI.Fody.CodeFix.Test.csproj", "{16D2F52E-C8BD-414D-B11F-2D46C843EFC6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReactiveUI.Fody.CodeFix.Vsix", "ReactiveUI.Fody.CodeFix\ReactiveUI.Fody.CodeFix.Vsix\ReactiveUI.Fody.CodeFix.Vsix.csproj", "{328743F4-D6DD-41BD-85A5-E556CC553A14}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		ReactiveUI.Fody.Helpers\ReactiveUI.Fody.Helpers.projitems*{1ca52110-be45-4c45-b709-28061077e2a5}*SharedItemsImports = 4
@@ -45,6 +51,18 @@ Global
 		{A735C110-6877-4C3A-8056-9ABC5FB2DD91}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A735C110-6877-4C3A-8056-9ABC5FB2DD91}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A735C110-6877-4C3A-8056-9ABC5FB2DD91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{973B467F-2916-48D8-8075-67F4E3C320D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{973B467F-2916-48D8-8075-67F4E3C320D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{973B467F-2916-48D8-8075-67F4E3C320D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{973B467F-2916-48D8-8075-67F4E3C320D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16D2F52E-C8BD-414D-B11F-2D46C843EFC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16D2F52E-C8BD-414D-B11F-2D46C843EFC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16D2F52E-C8BD-414D-B11F-2D46C843EFC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16D2F52E-C8BD-414D-B11F-2D46C843EFC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{328743F4-D6DD-41BD-85A5-E556CC553A14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{328743F4-D6DD-41BD-85A5-E556CC553A14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{328743F4-D6DD-41BD-85A5-E556CC553A14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{328743F4-D6DD-41BD-85A5-E556CC553A14}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
