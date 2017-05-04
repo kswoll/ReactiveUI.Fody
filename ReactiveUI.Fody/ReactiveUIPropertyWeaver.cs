@@ -42,9 +42,13 @@ namespace ReactiveUI.Fody
             if (reactiveObjectExtensions == null)
                 throw new Exception("reactiveObjectExtensions is null");
 
-            var raiseAndSetIfChangedMethod = ModuleDefinition.Import(reactiveObjectExtensions.Methods.Single(x => x.Name == "RaiseAndSetIfChanged"));
+            var raiseAndSetIfChangedMethod = ModuleDefinition.ImportReference(reactiveObjectExtensions.Methods.Single(x => x.Name == "RaiseAndSetIfChanged"));
             if (raiseAndSetIfChangedMethod == null)
                 throw new Exception("raiseAndSetIfChangedMethod is null");
+
+            var raisePropertyChangedMethod = ModuleDefinition.ImportReference(reactiveObjectExtensions.Methods.Single(x => x.Name == "RaisePropertyChanged"));
+            if (raisePropertyChangedMethod == null)
+                throw new Exception("raisePropertyChangedMethod is null");
 
             var reactiveAttribute = ModuleDefinition.FindType("ReactiveUI.Fody.Helpers", "ReactiveAttribute", helpers);
             if (reactiveAttribute == null)
@@ -54,6 +58,59 @@ namespace ReactiveUI.Fody
             {
                 foreach (var property in targetType.Properties.Where(x => x.IsDefined(reactiveAttribute)).ToArray())
                 {
+                    TypeReference genericTargetType = targetType;
+                    if (targetType.HasGenericParameters)
+                    {
+                        var genericDeclaration = new GenericInstanceType(targetType);
+                        foreach (var parameter in targetType.GenericParameters)
+                        {
+                            genericDeclaration.GenericArguments.Add(parameter);
+                        }
+                        genericTargetType = genericDeclaration;
+                    }
+
+                    if (property.SetMethod == null && property.GetMethod.IsExpressionBodiedProperty())
+                    {
+                        // Add this.RaisePropertyChange(PropertyName) to the setter of any properties referenced 
+                        // by this expression bodied property where they have an available setter
+                        var getInstructions = property.GetMethod.Body.Instructions.Where(i =>
+                        {
+                            var operand = i.Operand as MethodDefinition;
+                            return i.OpCode == OpCodes.Call && (operand?.IsGetter ?? false);
+                        });
+
+                        var setMethodsForGetInstructions =
+                            targetType.Properties.Where(
+                                    prop =>
+                                        prop.SetMethod != null &&
+                                        prop.SetMethod.HasBody &&
+                                        getInstructions.Any(
+                                            i => ((MethodDefinition) i.Operand).FullName == prop.GetMethod.FullName))
+                                .Select(prop => prop.SetMethod);
+
+                        if (!setMethodsForGetInstructions.Any())
+                        {
+                            LogError(
+                                $"Property {property.DeclaringType.FullName}.{property.Name} only references other expression bodied properties, as these have no setter they're not supported by the [Reactive] attribute");
+                        }
+
+                        var raisePropertyChangedMethodReference = raisePropertyChangedMethod.MakeGenericMethod(genericTargetType);
+
+                        foreach (var method in setMethodsForGetInstructions)
+                        {
+                            method.Body.Emit(il =>
+                            {
+                                var last = method.Body.Instructions.Last(i => i.OpCode == OpCodes.Ret && (i.Next == null || method.Body.Instructions.Last() == i));
+                                il.InsertBefore(last, il.Create(OpCodes.Ldarg_0));
+                                il.InsertBefore(last, il.Create(OpCodes.Ldstr, property.Name));
+                                il.InsertBefore(last, il.Create(OpCodes.Call, raisePropertyChangedMethodReference));
+                            });
+                        }
+
+                        // Move on to next property for the target type
+                        continue;
+                    }
+
                     if (property.SetMethod == null)
                     {
                         LogError($"Property {property.DeclaringType.FullName}.{property.Name} has no setter, therefore it is not possible for the property to change, and thus should not be marked with [Reactive]");
@@ -91,17 +148,6 @@ namespace ReactiveUI.Fody
                         il.Emit(OpCodes.Ldfld, field.BindDefinition(targetType));   // pop -> this.$PropertyName
                         il.Emit(OpCodes.Ret);                                       // Return the field value that is lying on the stack
                     });
-
-                    TypeReference genericTargetType = targetType;
-                    if (targetType.HasGenericParameters)
-                    {
-                        var genericDeclaration = new GenericInstanceType(targetType);
-                        foreach (var parameter in targetType.GenericParameters)
-                        {
-                            genericDeclaration.GenericArguments.Add(parameter);
-                        }
-                        genericTargetType = genericDeclaration;
-                    }
                     
                     var methodReference = raiseAndSetIfChangedMethod.MakeGenericMethod(genericTargetType, property.PropertyType);
 

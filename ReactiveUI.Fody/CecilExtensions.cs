@@ -126,6 +126,15 @@ namespace ReactiveUI.Fody
             return type.FullName == compareTo.FullName;
         }
 
+        public static bool IsExpressionBodiedProperty(this MethodDefinition method)
+        {
+            return method.Body.Instructions.Any(i =>
+            {
+                var operand = i.Operand as MethodDefinition;
+                return i.OpCode == OpCodes.Call && (operand?.IsGetter ?? false);
+            });
+        }
+
 /*
 
         public static IEnumerable<TypeDefinition> GetAllTypes(this ModuleDefinition module)
