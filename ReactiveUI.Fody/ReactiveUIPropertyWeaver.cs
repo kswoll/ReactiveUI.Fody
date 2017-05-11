@@ -56,6 +56,10 @@ namespace ReactiveUI.Fody
 
             foreach (var targetType in targetTypes)
             {
+                var setMethodByGetMethods = targetType.Properties
+                    .Where(x => x.SetMethod != null && x.GetMethod != null && x.IsDefined(reactiveAttribute))
+                    .ToDictionary(x => x.GetMethod, x => x.SetMethod);
+
                 foreach (var property in targetType.Properties.Where(x => x.IsDefined(reactiveAttribute)).ToArray())
                 {
                     TypeReference genericTargetType = targetType;
@@ -69,29 +73,17 @@ namespace ReactiveUI.Fody
                         genericTargetType = genericDeclaration;
                     }
 
-                    if (property.SetMethod == null && property.GetMethod.IsExpressionBodiedProperty())
+                    if (property.SetMethod == null && property.GetMethod.TryGetMethodDependencies(out MethodDefinition[] getMethods))
                     {
-                        // Add this.RaisePropertyChange(PropertyName) to the setter of any properties referenced 
-                        // by this expression bodied property where they have an available setter
-                        var getInstructions = property.GetMethod.Body.Instructions.Where(i =>
-                        {
-                            var operand = i.Operand as MethodDefinition;
-                            return i.OpCode == OpCodes.Call && (operand?.IsGetter ?? false);
-                        });
-
-                        var setMethodsForGetInstructions =
-                            targetType.Properties.Where(
-                                    prop =>
-                                        prop.SetMethod != null &&
-                                        prop.SetMethod.HasBody &&
-                                        getInstructions.Any(
-                                            i => ((MethodDefinition) i.Operand).FullName == prop.GetMethod.FullName))
-                                .Select(prop => prop.SetMethod);
+                        var setMethodsForGetInstructions = getMethods
+                            .Where(x => setMethodByGetMethods.ContainsKey(x))
+                            .Select(x => setMethodByGetMethods[x])
+                            .ToArray();
 
                         if (!setMethodsForGetInstructions.Any())
                         {
-                            LogError(
-                                $"Property {property.DeclaringType.FullName}.{property.Name} only references other expression bodied properties, as these have no setter they're not supported by the [Reactive] attribute");
+                            LogError($"Get only Property {property.DeclaringType.FullName}.{property.Name} has no supported dependent properties. " +
+                                     $"Only dependent auto properties decorated with the [Reactive] attribute can be weaved to raise property change on {property.Name}");
                         }
 
                         var raisePropertyChangedMethodReference = raisePropertyChangedMethod.MakeGenericMethod(genericTargetType);
@@ -100,7 +92,7 @@ namespace ReactiveUI.Fody
                         {
                             method.Body.Emit(il =>
                             {
-                                var last = method.Body.Instructions.Last(i => i.OpCode == OpCodes.Ret && (i.Next == null || method.Body.Instructions.Last() == i));
+                                var last = method.Body.Instructions.Last(i => i.OpCode == OpCodes.Ret);
                                 il.InsertBefore(last, il.Create(OpCodes.Ldarg_0));
                                 il.InsertBefore(last, il.Create(OpCodes.Ldstr, property.Name));
                                 il.InsertBefore(last, il.Create(OpCodes.Call, raisePropertyChangedMethodReference));

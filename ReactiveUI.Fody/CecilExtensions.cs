@@ -126,13 +126,29 @@ namespace ReactiveUI.Fody
             return type.FullName == compareTo.FullName;
         }
 
-        public static bool IsExpressionBodiedProperty(this MethodDefinition method)
+        public static IEnumerable<MethodDefinition> GetMethodDependencies(this MethodDefinition method)
         {
-            return method.Body.Instructions.Any(i =>
-            {
-                var operand = i.Operand as MethodDefinition;
-                return i.OpCode == OpCodes.Call && (operand?.IsGetter ?? false);
-            });
+            if (!method.IsGetter) return Enumerable.Empty<MethodDefinition>();
+
+            return method.Body.Instructions.Where(i =>
+                {
+                    var operand = i.Operand as MethodDefinition;
+                    return i.OpCode == OpCodes.Call && (operand?.IsGetter ?? false);
+                })
+                .SelectMany(instruction =>
+                {
+                    var methodDefinition = (MethodDefinition) instruction.Operand;
+                    return methodDefinition.GetMethodDependencies().Concat(new[] { methodDefinition });
+                });
+        }
+
+        public static bool TryGetMethodDependencies(this MethodDefinition method, out MethodDefinition[] getMethods)
+        {
+            getMethods = method.GetMethodDependencies()
+                .Distinct()
+                .ToArray();
+
+            return getMethods.Any();
         }
 
 /*
