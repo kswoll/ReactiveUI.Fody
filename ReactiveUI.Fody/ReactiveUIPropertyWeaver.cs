@@ -46,14 +46,63 @@ namespace ReactiveUI.Fody
             if (raiseAndSetIfChangedMethod == null)
                 throw new Exception("raiseAndSetIfChangedMethod is null");
 
+            var raisePropertyChangedMethod = ModuleDefinition.ImportReference(reactiveObjectExtensions.Methods.Single(x => x.Name == "RaisePropertyChanged"));
+            if (raisePropertyChangedMethod == null)
+                throw new Exception("raisePropertyChangedMethod is null");
+
             var reactiveAttribute = ModuleDefinition.FindType("ReactiveUI.Fody.Helpers", "ReactiveAttribute", helpers);
             if (reactiveAttribute == null)
                 throw new Exception("reactiveAttribute is null");
 
             foreach (var targetType in targetTypes)
             {
+                var setMethodByGetMethods = targetType.Properties
+                    .Where(x => x.SetMethod != null && x.GetMethod != null && x.IsDefined(reactiveAttribute))
+                    .ToDictionary(x => x.GetMethod, x => x.SetMethod);
+
                 foreach (var property in targetType.Properties.Where(x => x.IsDefined(reactiveAttribute)).ToArray())
                 {
+                    TypeReference genericTargetType = targetType;
+                    if (targetType.HasGenericParameters)
+                    {
+                        var genericDeclaration = new GenericInstanceType(targetType);
+                        foreach (var parameter in targetType.GenericParameters)
+                        {
+                            genericDeclaration.GenericArguments.Add(parameter);
+                        }
+                        genericTargetType = genericDeclaration;
+                    }
+
+                    if (property.SetMethod == null && property.GetMethod.TryGetMethodDependencies(out MethodDefinition[] getMethods))
+                    {
+                        var setMethodsForGetInstructions = getMethods
+                            .Where(x => setMethodByGetMethods.ContainsKey(x))
+                            .Select(x => setMethodByGetMethods[x])
+                            .ToArray();
+
+                        if (!setMethodsForGetInstructions.Any())
+                        {
+                            LogError($"Get only Property {property.DeclaringType.FullName}.{property.Name} has no supported dependent properties. " +
+                                     $"Only dependent auto properties decorated with the [Reactive] attribute can be weaved to raise property change on {property.Name}");
+                        }
+
+                        var raisePropertyChangedMethodReference = raisePropertyChangedMethod.MakeGenericMethod(genericTargetType);
+
+                        foreach (var method in setMethodsForGetInstructions)
+                        {
+                            method.Body.Emit(il =>
+                            {
+                                var last = method.Body.Instructions.Last(i => i.OpCode == OpCodes.Ret);
+                                il.InsertBefore(last, il.Create(OpCodes.Ldarg_0));
+                                il.InsertBefore(last, il.Create(OpCodes.Ldstr, property.Name));
+                                il.InsertBefore(last, il.Create(OpCodes.Call, raisePropertyChangedMethodReference));
+                            });
+                        }
+
+                        // Move on to next property for the target type
+                        continue;
+                    }
+
                     if (property.SetMethod == null)
                     {
                         LogError($"Property {property.DeclaringType.FullName}.{property.Name} has no setter, therefore it is not possible for the property to change, and thus should not be marked with [Reactive]");
@@ -91,18 +140,7 @@ namespace ReactiveUI.Fody
                         il.Emit(OpCodes.Ldfld, field.BindDefinition(targetType));   // pop -> this.$PropertyName
                         il.Emit(OpCodes.Ret);                                       // Return the field value that is lying on the stack
                     });
-
-                    TypeReference genericTargetType = targetType;
-                    if (targetType.HasGenericParameters)
-                    {
-                        var genericDeclaration = new GenericInstanceType(targetType);
-                        foreach (var parameter in targetType.GenericParameters)
-                        {
-                            genericDeclaration.GenericArguments.Add(parameter);
-                        }
-                        genericTargetType = genericDeclaration;
-                    }
-
+                    
                     var methodReference = raiseAndSetIfChangedMethod.MakeGenericMethod(genericTargetType, property.PropertyType);
 
                     // Build out the setter which fires the RaiseAndSetIfChanged method
