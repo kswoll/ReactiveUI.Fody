@@ -73,7 +73,8 @@ namespace ReactiveUI.Fody
                         genericTargetType = genericDeclaration;
                     }
 
-                    if (property.SetMethod == null && property.GetMethod.TryGetMethodDependencies(out MethodDefinition[] getMethods))
+                    MethodDefinition[] getMethods;
+                    if (property.SetMethod == null && property.GetMethod.TryGetMethodDependencies(out getMethods))
                     {
                         var setMethodsForGetInstructions = getMethods
                             .Where(x => setMethodByGetMethods.ContainsKey(x))
@@ -140,7 +141,7 @@ namespace ReactiveUI.Fody
                         il.Emit(OpCodes.Ldfld, field.BindDefinition(targetType));   // pop -> this.$PropertyName
                         il.Emit(OpCodes.Ret);                                       // Return the field value that is lying on the stack
                     });
-                    
+
                     var methodReference = raiseAndSetIfChangedMethod.MakeGenericMethod(genericTargetType, property.PropertyType);
 
                     // Build out the setter which fires the RaiseAndSetIfChanged method
