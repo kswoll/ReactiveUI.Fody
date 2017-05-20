@@ -146,6 +146,6 @@ namespace ReactiveUI.Fody.Tests.Issues
 
             [Reactive]
             public string CombinedExpressionBodyPropertyWithAutoPropNonReactiveProperty => CombinedExpressionBodyPropertyWithAutoProp + NonReactiveProperty;
-        } 
+        }
     }
 }
