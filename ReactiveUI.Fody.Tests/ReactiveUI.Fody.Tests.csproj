@@ -78,6 +78,7 @@
     <Compile Include="Issues\Issue13Tests.cs" />
     <Compile Include="Issues\Issue11Tests.cs" />
     <Compile Include="Issues\Issue41Tests.cs" />
+    <Compile Include="Issues\Issue47Tests.cs" />
     <Compile Include="ObservableAsPropertyTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReactiveDependencyTests.cs" />
