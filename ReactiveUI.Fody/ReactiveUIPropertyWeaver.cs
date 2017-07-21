@@ -42,17 +42,21 @@ namespace ReactiveUI.Fody
             if (reactivePropertyExtensions == null)
                 throw new Exception("reactivePropertyExtensions is null");
 
-            var raiseAndSetIfChangedMethod = ModuleDefinition.Import(reactivePropertyExtensions.Methods.Single(x => x.Name == "RaiseAndSetIfChanged"));
+            var raiseAndSetIfChangedMethod = ModuleDefinition.ImportReference(reactivePropertyExtensions.Methods.Single(x => x.Name == "RaiseAndSetIfChanged"));
             if (raiseAndSetIfChangedMethod == null)
                 throw new Exception("raiseAndSetIfChangedMethod is null");
-
-            var raisePropertyChangedMethod = ModuleDefinition.ImportReference(reactiveObjectExtensions.Methods.Single(x => x.Name == "RaisePropertyChanged"));
-            if (raisePropertyChangedMethod == null)
-                throw new Exception("raisePropertyChangedMethod is null");
 
             var reactiveAttribute = ModuleDefinition.FindType("ReactiveUI.Fody.Helpers", "ReactiveAttribute", helpers);
             if (reactiveAttribute == null)
                 throw new Exception("reactiveAttribute is null");
+
+            var reactiveObjectExtensions = new TypeReference("ReactiveUI", "IReactiveObjectExtensions", ModuleDefinition, reactiveUI).Resolve();
+            if (reactiveObjectExtensions == null)
+                throw new Exception("reactiveObjectExtensions is null");
+
+            var raisePropertyChangedMethod = ModuleDefinition.ImportReference(reactiveObjectExtensions.Methods.Single(x => x.Name == "RaisePropertyChanged"));
+            if (raisePropertyChangedMethod == null)
+                throw new Exception("raisePropertyChangedMethod is null");
 
             foreach (var targetType in targetTypes)
             {
@@ -152,17 +156,22 @@ namespace ReactiveUI.Fody
                     property.SetMethod.Body = new MethodBody(property.SetMethod);
                     property.SetMethod.Body.Emit(il =>
                     {
-                        il.Emit(OpCodes.Ldarg_0);                                   // this
-                        il.Emit(OpCodes.Ldarg_0);                                   // this
-                        il.Emit(OpCodes.Ldflda, field.BindDefinition(targetType));  // pop -> this.$PropertyName
-                        il.Emit(OpCodes.Ldarg_1);                                   // value
-                        il.Emit(OpCodes.Ldstr, property.Name);                      // "PropertyName"
-                        il.Emit(OpCodes.Call, methodReference);                     // pop * 4 -> this.RaiseAndSetIfChanged(this.$PropertyName, value, "PropertyName")
-                        il.Emit(OpCodes.Pop);                                       // We don't care about the result of RaiseAndSetIfChanged, so pop it off the stack (stack is now empty)
-                        il.Emit(OpCodes.Ret);                                       // Return out of the function
+                        RaiseAndSetIfChanged(methodReference, targetType, field, il, property.Name);
                     });
                 }
             }
+        }
+
+        private void RaiseAndSetIfChanged(MethodReference raiseAndSetIfChangedMethod, TypeDefinition targetType, FieldDefinition field, ILProcessor il, string propertyName)
+        {
+            il.Emit(OpCodes.Ldarg_0);                                   // this
+            il.Emit(OpCodes.Ldarg_0);                                   // this
+            il.Emit(OpCodes.Ldflda, field.BindDefinition(targetType));  // pop -> ref this.$PropertyName
+            il.Emit(OpCodes.Ldarg_1);                                   // value
+            il.Emit(OpCodes.Ldstr, propertyName);                      // "PropertyName"
+            il.Emit(OpCodes.Call, raiseAndSetIfChangedMethod);                     // pop * 4 -> this.RaiseAndSetIfChanged(this.$PropertyName, value, "PropertyName")
+            il.Emit(OpCodes.Pop);                                       // We don't care about the result of RaiseAndSetIfChanged, so pop it off the stack (stack is now empty)
+            il.Emit(OpCodes.Ret);                                       // Return out of the function
         }
     }
 }

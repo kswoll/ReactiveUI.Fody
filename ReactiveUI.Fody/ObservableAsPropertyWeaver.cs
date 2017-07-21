@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -38,9 +37,9 @@ namespace ReactiveUI.Fody
 
             var observableAsPropertyHelper = ModuleDefinition.FindType("ReactiveUI", "ObservableAsPropertyHelper`1", reactiveUI, "T");
             var observableAsPropertyAttribute = ModuleDefinition.FindType("ReactiveUI.Fody.Helpers", "ObservableAsPropertyAttribute", helpers);
-            var observableAsPropertyHelperGetValue = ModuleDefinition.Import(observableAsPropertyHelper.Resolve().Properties.Single(x => x.Name == "Value").GetMethod);
-            var exceptionType = ModuleDefinition.Import(typeof(Exception));
-            var exceptionConstructor = ModuleDefinition.Import(exceptionType.Resolve().GetConstructors().Single(x => x.Parameters.Count == 1));
+            var observableAsPropertyHelperGetValue = ModuleDefinition.ImportReference(observableAsPropertyHelper.Resolve().Properties.Single(x => x.Name == "Value").GetMethod);
+            var exceptionType = ModuleDefinition.ImportReference(typeof(Exception));
+            var exceptionConstructor = ModuleDefinition.ImportReference(exceptionType.Resolve().GetConstructors().Single(x => x.Parameters.Count == 1));
 
             foreach (var targetType in targetTypes)
             {
@@ -48,7 +47,7 @@ namespace ReactiveUI.Fody
                 {
                     var genericObservableAsPropertyHelper = observableAsPropertyHelper.MakeGenericInstanceType(property.PropertyType);
                     var genericObservableAsPropertyHelperGetValue = observableAsPropertyHelperGetValue.Bind(genericObservableAsPropertyHelper);
-                    ModuleDefinition.Import(genericObservableAsPropertyHelperGetValue);
+                    ModuleDefinition.ImportReference(genericObservableAsPropertyHelperGetValue);
 
                     // Declare a field to store the property value
                     var field = new FieldDefinition("$" + property.Name, FieldAttributes.Private, genericObservableAsPropertyHelper);
@@ -105,7 +104,7 @@ namespace ReactiveUI.Fody
             }
             else if (type.CompareTo(ModuleDefinition.TypeSystem.Int64))
             {
-                il.Emit(OpCodes.Ldc_I8);
+                il.Emit(OpCodes.Ldc_I8, (long)0);
             }
             else if (type.CompareTo(ModuleDefinition.TypeSystem.Double))
             {
