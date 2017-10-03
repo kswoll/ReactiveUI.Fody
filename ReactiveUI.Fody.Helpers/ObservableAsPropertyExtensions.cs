@@ -9,7 +9,7 @@ namespace ReactiveUI.Fody.Helpers
     {
         public static ObservableAsPropertyHelper<TRet> ToPropertyEx<TObj, TRet>(this IObservable<TRet> @this, TObj source, Expression<Func<TObj, TRet>> property, TRet initialValue = default(TRet), IScheduler scheduler = null) where TObj : ReactiveObject
         {
-            var result = @this.ToProperty(source, property, initialValue, scheduler);
+            var result = @this.ToProperty(source, property, initialValue, false, scheduler);
 
             // Now assign the field via reflection.
             var propertyInfo = property.GetPropertyInfo();

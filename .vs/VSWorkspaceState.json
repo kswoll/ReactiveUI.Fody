@@ -1,0 +1,11 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\ReactiveUI.Fody.Helpers",
+    "\\ReactiveUI.Fody.Tests",
+    "\\ReactiveUI.Fody.Tests\\Issues",
+    "\\Weavers"
+  ],
+  "SelectedNode": "\\ReactiveUI.Fody.Tests\\Issues\\Issue11Tests.cs",
+  "PreviewInSolutionExplorer": false
+}
