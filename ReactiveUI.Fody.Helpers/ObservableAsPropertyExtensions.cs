@@ -7,17 +7,19 @@ namespace ReactiveUI.Fody.Helpers
 {
     public static class ObservableAsPropertyExtensions
     {
-        public static ObservableAsPropertyHelper<TRet> ToPropertyEx<TObj, TRet>(this IObservable<TRet> @this, TObj source, Expression<Func<TObj, TRet>> property, TRet initialValue = default(TRet), IScheduler scheduler = null) where TObj : ReactiveObject
+        public static ObservableAsPropertyHelper<TRet> ToPropertyEx<TObj, TRet>(this IObservable<TRet> @this, TObj source, Expression<Func<TObj, TRet>> property, TRet initialValue = default(TRet), bool deferSubscription = false, IScheduler scheduler = null) where TObj : ReactiveObject
         {
-            var result = @this.ToProperty(source, property, initialValue, scheduler);
-
             // Now assign the field via reflection.
             var propertyInfo = property.GetPropertyInfo();
             if (propertyInfo == null)
                 throw new Exception("Could not resolve expression " + property + " into a property.");
+
             var field = propertyInfo.DeclaringType.GetTypeInfo().GetDeclaredField("$" + propertyInfo.Name);
             if (field == null)
                 throw new Exception("Backing field not found for " + propertyInfo);
+
+            var result = @this.ToProperty(source, property, initialValue, deferSubscription, scheduler);
+
             field.SetValue(source, result);
 
             return result;

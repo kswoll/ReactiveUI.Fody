@@ -38,7 +38,7 @@ namespace ReactiveUI.Fody
             var reactiveObjectExtensions = new TypeReference("ReactiveUI", "IReactiveObjectExtensions", ModuleDefinition, reactiveUI).Resolve();
             if (reactiveObjectExtensions == null) throw new Exception("reactiveObjectExtensions is null");
 
-            var raisePropertyChangedMethod = ModuleDefinition.Import(reactiveObjectExtensions.Methods.Single(x => x.Name == "RaisePropertyChanged"));
+            var raisePropertyChangedMethod = ModuleDefinition.ImportReference(reactiveObjectExtensions.Methods.Single(x => x.Name == "RaisePropertyChanged"));
             if (raisePropertyChangedMethod == null) throw new Exception("raisePropertyChangedMethod is null");
 
             var reactiveDependencyAttribute = ModuleDefinition.FindType("ReactiveUI.Fody.Helpers", "ReactiveDependencyAttribute", helpers);

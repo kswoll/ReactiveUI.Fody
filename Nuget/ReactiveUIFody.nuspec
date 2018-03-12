@@ -1,21 +1,24 @@
-
 <package>
   <metadata>
     <id>ReactiveUI.Fody</id>
-    <version>1.0.78</version>
+    <version>$version$</version>
     <authors>kirk</authors>
     <owners>kirk</owners>
     <projectUrl>https://github.com/kswoll/ReactiveUI.Fody</projectUrl>
     <licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
-	<releaseNotes>Fix some other bugs around properties in generic types.</releaseNotes>
+    <releaseNotes>Fix some other bugs around properties in generic types.</releaseNotes>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Fody extension to generate RaisePropertyChange notifications for properties and ObservableAsPropertyHelper properties.</description>
     <copyright>Copyright 2015</copyright>
     <tags>reactiveui fody</tags>
     <dependencies>
-      <dependency id="Fody" version="2.0.7" />
-	  <dependency id="reactiveui-core" version="6.4.0.1" />
-	  <dependency id="Splat" version="1.6.0" />
+      <dependency id="Fody" version="2.1.3" />
+      <dependency id="reactiveui" version="7.4.0" />
     </dependencies>
   </metadata>
+  
+  <files>
+    <file src="..\ReactiveUI.Fody\bin\Release\netstandard1.3\ReactiveUI.Fody.*" />
+    <file src="..\ReactiveUI.Fody.Helpers\bin\Release\netstandard1.3\ReactiveUI.Fody.Helpers.*" target="lib\netstandard1.3" />
+  </files>
 </package>
