@@ -16,7 +16,7 @@ Currently, you need to manually add `<ReactiveUI />` to your Fody weavers config
         <ReactiveUI />
     </Weavers>
 
-##Reactive Properties##
+## Reactive Properties
 
 Eases the need for boilerplate in your view models when using [reactiveui](https://github.com/reactiveui/ReactiveUI).  Typically, in your view models you must declare properties like this:
 
@@ -35,7 +35,7 @@ This is tedious since all you'd like to do is declare properties as normal:
 If a property is annotated with the `[Reactive]` attribute, the plugin will weave the boilerplate into your 
 output based on the simple auto-property declaration you provide.  
 
-##ObservableAsPropertyHelper Properties
+## ObservableAsPropertyHelper Properties
 
 Similarly, in order to handle observable property helper properties, you must declare them like this:
 
